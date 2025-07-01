@@ -1,8 +1,18 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { MikroORM } from '@mikro-orm/postgresql';
+
+
+const orm = await MikroORM.init({
+  entities: ['./entities'],
+  dbName: 'create-an-orc',
+});
+console.log(orm.em);
+
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
