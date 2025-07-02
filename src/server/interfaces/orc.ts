@@ -1,11 +1,10 @@
 interface Orc {
-    organismId: number;
-    taxonName: string;
-    latinName: string;
-    taxonGroupId: number;
-    pictureUrl: string;
+    orcId: number;
+    name: string;
     description: string;
-    isProtected: boolean;
+    promptsCollectionId: number;
+    orcImagesId: number;
+    userId: number;
 }
 
 interface CreateOrc {

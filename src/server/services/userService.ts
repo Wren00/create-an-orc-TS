@@ -1,120 +1,160 @@
-import { User, CreateUser } from '../interfaces/user';
-import { prisma } from "../utils";
+import bcrypt from "bcrypt";
+import {prisma} from "../utils/prisma";
+import {CreateUser, User} from '../interfaces/user';
 
 //GET functions
 
-async function getAllUsers() {
-    let allUsers;
+async function getAllUsers(): Promise<{ userId: bigint; userName: string }[]> {
     try {
-        allUsers = await prisma.interest_groups.findMany();
+        const allUsers = await prisma.user.findMany({
+            select: {
+                id: true,
+                userName: true
+            }
+        });
+
+        return allUsers.map((user) => ({
+            userId: user.id,
+            userName: user.userName
+        }));
     } catch (error) {
-        console.log(error);
+        console.error("Unable to fetch users.", error);
+        throw error;
     }
-    const users: User[] = allUsers.map((x: { id: any; group_name: any; description: any }) => ({
-        userId: x.id,
-        userName: x.group_name,
-        description: x.description,
-    }));
-    return groups;
 }
 
-async function getUserGroupByName(groupName: string) {
-    let groupArray;
+async function getUserById(userId: number) {
     try {
-        groupArray = await prisma.interest_groups.findMany({
-            where: { group_name: { contains: groupName, mode: "insensitive" } },
+        const userObject = await prisma.user.findUnique({
+            where: { id: userId },
         });
+        // error check if id could not be found, nothing is returned
+        if (!userObject) {
+            throw new Error(`User with ID ${userId} not found`);
+        }
+
+        return {
+            userId: userObject.id,
+            userName: userObject.userName,
+            emailAddress: userObject.emailAddress,
+            role: userObject.role
+        };
     } catch (error) {
-        console.log(error);
+        console.error("Failed to fetch user:", error);
+        throw error;
     }
-    const groups: UserGroup[] = groupArray.map((x: { id: any; group_name: any; description: any }) => ({
-        groupId: x.id,
-        groupName: x.group_name,
-        description: x.description,
-    }));
-
-    return groups;
-}
-
-async function getUserGroupById(groupId: number) {
-    let groupsObject;
-
-    try {
-        groupsObject = await prisma.interest_groups.findUnique({
-            where: { id: groupId },
-        });
-    } catch (error) {
-        console.log(error);
-    }
-
-    const returnedValue = {
-        groupId: groupsObject.id,
-        groupName: groupsObject.group_name,
-        description: groupsObject.description,
-    };
-    return returnedValue;
 }
 
 //UPDATE function
 
-async function updateUserGroup(group: UserGroup) {
-    let updatedGroup;
+async function updateUserDetails(user: User) {
+    let updateUser;
     try {
-        updatedGroup = await prisma.interest_groups.update({
+        updateUser = await prisma.users.update({
             where: {
-                id: group.groupId,
+                id: user.userId,
             },
             data: {
-                group_name: group.groupName,
-                description: group.description,
+                user_name: user.userName,
+                email_address: user.emailAddress
             },
         });
     } catch (error) {
         console.log(error);
     }
-    return updatedGroup;
+    return updateUser;
+}
+
+async function updateUserPassword(user: User) {
+    let updatedPassword;
+    const salt = await bcrypt.genSalt();
+
+    updatedPassword = await bcrypt.hash(user.userPassword, salt);
+
+    try {
+        updatedPassword = await prisma.user.update({
+            where: {
+                id: user.userId,
+            },
+            data: {
+                userPassword: updatedPassword,
+            },
+        });
+    } catch (error) {
+        console.log(error);
+    }
+    return updatedPassword;
+}
+
+async function updateUserRole(user: User) {
+    let updatedRole;
+    try {
+        updatedRole = await prisma.user.update({
+            where: {
+                id: user.userId,
+            },
+            data: {
+                role: user.userRole
+            },
+        });
+    } catch (error) {
+        console.log(error);
+    }
+    return updatedRole;
 }
 
 //CREATE function
 
-async function createUserGroup(group: UserGroup) {
-    let newGroup;
+async function createUser(user: CreateUser) {
     try {
-        newGroup = await prisma.interest_groups.create({
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(user.userPassword, salt);
+
+        const newUser = await prisma.user.create({
             data: {
-                group_name: group.groupName,
-                description: group.description,
-            },
+                userName: user.userName,
+                emailAddress: user.emailAddress,
+                userPassword: hashedPassword,
+                profile: {
+                    create: {} // create and link user profile
+                }
+            }
         });
-    } catch (error) {
-        console.log(error);
+
+        const createdUser = {
+            userId: newUser.id,
+            userName: newUser.userName,
+            emailAddress: newUser.emailAddress,
+            userRole: newUser.role
+        };
+        return createdUser.userName;
+    } catch(error) {
+        throw Error("Cannot create user");
     }
-    return newGroup;
 }
 
 //DELETE function
 
-async function deleteUserGroupById(groupId: number) {
-    let deletedGroup;
+async function deleteUserById(userId: number) {
+    let deletedUser;
     try {
-        deletedGroup = await prisma.interest_groups.delete({
+        deletedUser = await prisma.user.delete({
             where: {
-                id: groupId,
+                id: userId
             },
         });
     } catch (error) {
         console.log(error);
     }
-    return deletedGroup;
+    return deletedUser;
 }
 
-const UserGroupService = {
-    getAllUserGroups,
-    getUserGroupByName,
-    getUserGroupById,
-    updateUserGroup,
-    createUserGroup,
-    deleteUserGroupById,
+const UserService = {
+    getAllUsers,
+    getUserById,
+    createUser,
+    updateUserDetails,
+    deleteUserById
 };
 
-export { UserGroupService };
+export { UserService };

@@ -1,10 +1,12 @@
+import { Role } from '@prisma/client';
+
 interface User {
     userId: number;
     userName: string;
     emailAddress: string;
     userPassword: string;
     availableTokens: number;
-    role: number;
+    userRole: Role;
 }
 
 interface CreateUser {
@@ -13,4 +15,12 @@ interface CreateUser {
     userPassword: string;
 }
 
-export type { User, CreateUser };
+interface UpdateUser {
+    userName?: string;
+    emailAddress?: string;
+    userPassword?: string;
+    availableTokens?: number;
+    userRole?: Role;
+}
+
+export { User, CreateUser };
