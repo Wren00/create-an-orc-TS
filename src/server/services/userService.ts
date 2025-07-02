@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {CreateUser, User} from '../interfaces/user';
+import {CreateUser, UpdateUserAdminInput, UpdateUserInput} from '../interfaces/user';
+import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
 
@@ -12,8 +13,7 @@ async function getAllUsers(): Promise<{ userId: bigint; userName: string }[]> {
                 userName: true
             }
         });
-
-        return allUsers.map((user) => ({
+        return  allUsers.map((user): { userId: bigint; userName: string } => ({
             userId: user.id,
             userName: user.userName
         }));
@@ -45,62 +45,78 @@ async function getUserById(userId: number) {
     }
 }
 
+async function getUserByName(nameSearch: string) {
+    try {
+        return await prisma.user.findMany({
+            where: {
+                userName: {
+                    contains: nameSearch,
+                    mode: 'insensitive'
+                }
+            },
+            select: {
+                id: true,
+                userName: true,
+            }
+        });
+    } catch (error) {
+        console.error("User search failed:", error);
+        throw error;
+    }
+}
+
 //UPDATE function
 
-async function updateUserDetails(user: User) {
-    let updateUser;
+async function updateUserDetails(input: UpdateUserInput) {
     try {
-        updateUser = await prisma.users.update({
-            where: {
-                id: user.userId,
-            },
-            data: {
-                user_name: user.userName,
-                email_address: user.emailAddress
-            },
+        const dataToUpdate: Record<string, any> = {
+            userName: input.userName,
+            emailAddress: input.emailAddress,
+            userPassword: input.userPassword
+        };
+
+        if (input.userPassword) {
+            const salt = await bcrypt.genSalt();
+            const hashedPassword = await bcrypt.hash(input.userPassword, salt);
+            dataToUpdate.userPassword = hashedPassword;
+        }
+
+        const updatedUser = await prisma.user.update({
+            where: { id: input.userId },
+            data: removeUndefined(dataToUpdate),
         });
+
+        return updatedUser;
     } catch (error) {
-        console.log(error);
+        console.error("Error updating user:", error);
+        throw error;
     }
-    return updateUser;
 }
 
-async function updateUserPassword(user: User) {
-    let updatedPassword;
-    const salt = await bcrypt.genSalt();
-
-    updatedPassword = await bcrypt.hash(user.userPassword, salt);
-
+export async function updateUserAsAdmin(input: UpdateUserAdminInput) {
     try {
-        updatedPassword = await prisma.user.update({
-            where: {
-                id: user.userId,
-            },
-            data: {
-                userPassword: updatedPassword,
-            },
-        });
-    } catch (error) {
-        console.log(error);
-    }
-    return updatedPassword;
-}
+        const dataToUpdate: Record<string, any> = {
+            userName: input.userName,
+            emailAddress: input.emailAddress,
+            availableTokens: input.availableTokens,
+            role: input.role,
+        };
 
-async function updateUserRole(user: User) {
-    let updatedRole;
-    try {
-        updatedRole = await prisma.user.update({
-            where: {
-                id: user.userId,
-            },
-            data: {
-                role: user.userRole
-            },
+        if (input.userPassword) {
+            const salt = await bcrypt.genSalt();
+            dataToUpdate.userPassword = await bcrypt.hash(input.userPassword, salt);
+        }
+
+        const updatedUser = await prisma.user.update({
+            where: { id: input.userId },
+            data: removeUndefined(dataToUpdate),
         });
+
+        return updatedUser;
     } catch (error) {
-        console.log(error);
+        console.error("Admin user update failed:", error);
+        throw error;
     }
-    return updatedRole;
 }
 
 //CREATE function
@@ -135,7 +151,7 @@ async function createUser(user: CreateUser) {
 
 //DELETE function
 
-async function deleteUserById(userId: number) {
+async function deleteUserById(userId: bigint) {
     let deletedUser;
     try {
         deletedUser = await prisma.user.delete({
@@ -152,8 +168,10 @@ async function deleteUserById(userId: number) {
 const UserService = {
     getAllUsers,
     getUserById,
+    getUserByName,
     createUser,
     updateUserDetails,
+    updateUserAsAdmin,
     deleteUserById
 };
 

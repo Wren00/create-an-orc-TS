@@ -7,17 +7,13 @@ const UserRouter = express.Router();
 
 UserRouter.get("/getAllUsers", UserController.getAllUsers);
 UserRouter.get("/getUserById/:id", UserController.getUserById);
+UserRouter.get("/getUserByName/:name", UserController.getUserByName);
+
 
 //PRIVATE endpoints
 
-UserRouter.get("/getUserByName", UserController.getUserByName);
-UserRouter.get("/getProfileByUserId/:id", UserController.getProfileByUserId);
-UserRouter.get("/getUserByEmail", UserController.getUserByEmail);
-UserRouter.get("/getUserByLevel", UserController.getUserByLevel);
-UserRouter.get("/getTrustedUsers", UserController.getTrustedUsers);
 UserRouter.put("/updateUserDetails", UserController.updateUserDetails);
-UserRouter.put("/updateUserPassword", UserController.updateUserPassword);
-UserRouter.put("/updateUserProfile", UserController.updateUserProfile);
+UserRouter.put("/updateAdminUserDetails", UserController.updateUserAsAdmin);
 UserRouter.post("/createUser", UserController.createUser);
 UserRouter.put("/deleteUserById", UserController.deleteUserById);
 

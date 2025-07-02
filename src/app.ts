@@ -13,15 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 
 /* setup Express Routers */
 
-app.use("/api/users/", UserRouter);
-// app.use("/api/orcs/", OrcRouter);
-app.use("/api/interestgroups/", UserGroupRouter);
-app.use("/api/unverifiedsightings/", UnverifiedSightingRouter);
-app.use("/api/confirmedsightings/", ConfirmedSightingRouter);
-app.use("/api/taxongroups/", TaxonGroupRouter);
-app.use("/api/reactions/", UserReactionRouter);
-app.use("/api/auth/", AuthenticationRouter);
-app.use("/api/images/", ImageRouter);
+app.use("/users/", UserRouter);
+// app.use("/orcs/", OrcRouter);
+// app.use("/prompts/", PromptsRouter
 
 
 

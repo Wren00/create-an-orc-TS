@@ -1,17 +1,17 @@
 interface Orc {
-    orcId: number;
+    orcId: bigint;
     name: string;
     description: string;
-    promptsCollectionId: number;
-    orcImagesId: number;
-    userId: number;
+    promptsCollectionId: bigint;
+    orcImagesId: bigint;
+    userId: bigint;
 }
 
 interface CreateOrc {
     name: String
     description: String
-    promptCollectionId: number
-    orcImagesId: number
-    userId: number
+    promptCollectionId: bigint
+    orcImagesId: bigint
+    userId: bigint
 }
 export { Orc, CreateOrc };
