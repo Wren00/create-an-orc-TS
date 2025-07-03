@@ -1,4 +1,6 @@
-import { Role } from '@prisma/client';
+// @ts-ignore
+import {Role} from "@prisma/client";
+
 
 interface User {
     userId: number;
@@ -14,8 +16,6 @@ interface CreateUser {
     userName: string;
     emailAddress: string;
     userPassword: string;
-    availableTokens?: number;
-    userRole?: Role;
 }
 
 interface UpdateUserInput {
@@ -23,8 +23,6 @@ interface UpdateUserInput {
     userName?: string;
     emailAddress?: string;
     userPassword?: string;
-    availableTokens?: number;
-    userRole?: Role;
 }
 
 interface UpdateUserAdminInput extends UpdateUserInput {

@@ -14,7 +14,7 @@ async function getAllOrcsAdmin(): Promise<{ orcId: number, name: string, orcImag
                 orcImagesId: true
             }
         });
-        return  allOrcs.map((orc): { orcId: number; name: string, orcImagesId: number } => ({
+        return  allOrcs.map((orc: { id: any; name: any; orcImagesId: any; }): { orcId: number; name: string, orcImagesId: number } => ({
             orcId: orc.id,
             name: orc.name,
             orcImagesId: orc.orcImagesId
@@ -53,7 +53,7 @@ async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: s
         const orcsByUser = await prisma.orc.findMany({
             where: { userId: userId },
         });
-        return  orcsByUser.map((orc): { orcId: number; name: string, description: string, orcImagesId: number } => ({
+        return  orcsByUser.map((orc: { id: any; name: any; description: any; orcImagesId: any; }): { orcId: number; name: string, description: string, orcImagesId: number } => ({
             orcId: orc.id,
             name: orc.name,
             description: orc.description,

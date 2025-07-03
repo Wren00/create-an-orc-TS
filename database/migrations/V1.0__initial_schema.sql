@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS public.users
     user_name text not null UNIQUE,
     email_address text not null UNIQUE,
     user_password text not null,
-    available_tokens int not null,
-    role Role NOT NULL,
+    available_tokens int not null DEFAULT 5,
+    role Role NOT NULL DEFAULT 'USER',
     profile_id int constraint user_profile_fk references user_profile(id)
 );
 

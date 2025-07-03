@@ -1,6 +1,8 @@
 import express from "express";
-import { UserRouter } from "./server/routers/userRouter";
-import { OrcRouter } from "./server/routers/orcRouter";
+import { UserRouter } from "./routers/userRouter";
+import { OrcRouter } from "./routers/orcRouter";
+import cors from "cors";
+import morgan from "morgan";
 
 // initialise app
 const app = express();
@@ -9,11 +11,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// global BigInt serialisation for routes
-
-// (BigInt.prototype as any).toJSON = function () {
-//     return this.toString();
-// };
+app.use(cors());
+app.use(morgan("tiny"));
 
 // express routers
 

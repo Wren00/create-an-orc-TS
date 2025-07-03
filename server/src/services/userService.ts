@@ -13,7 +13,7 @@ async function getAllUsers(): Promise<{ userId: string; userName: string }[]> {
                 userName: true
             }
         });
-        return  allUsers.map((user): { userId: string; userName: string } => ({
+        return  allUsers.map((user: { id: { toString: () => any; }; userName: any; }): { userId: string; userName: string } => ({
             userId: user.id.toString(),
             userName: user.userName
         }));
@@ -62,7 +62,7 @@ async function getUserByName(nameSearch: string): Promise<User[]> {
         throw error;
     }
 
-    return userArray.map((x) => ({
+    return userArray.map((x:any) => ({
         userId: x.id,
         userName: x.userName,
         emailAddress: x.emailAddress,
