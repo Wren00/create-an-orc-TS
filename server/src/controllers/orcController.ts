@@ -35,12 +35,13 @@ const getOrcsByUserId = async (req: Request, res: Response, next: NextFunction):
 
 //CREATE functions
 
-const saveOrc = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const saveOrc = async (req: Request, res: Response, next: NextFunction): Promise<void> => {;
     try {
         const newOrc: CreateOrc = req.body;
         const createdOrc = await OrcService.saveOrc(newOrc)
         res.status(200).json(createdOrc);
     } catch (error) {
+        console.error("Error in saveOrc controller:", error);
         res.status(500).json("Could not save orc.");
     }
 }

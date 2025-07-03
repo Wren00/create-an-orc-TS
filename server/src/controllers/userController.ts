@@ -43,7 +43,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction): Pro
 
 const updateUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        console.log("upodating user");
+        console.log("updating user");
         const updateDetails: User = req.body;
         const updatedUser = await UserService.updateUserDetails(updateDetails);
         res.status(200).json(updatedUser);
@@ -68,6 +68,7 @@ const updateUserAsAdmin = async (req: Request, res: Response, next: NextFunction
 
 const createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        console.log("new user");
         const newUser: CreateUser = req.body;
         const createdUser = await UserService.createUser(newUser);
         res.status(200).json(createdUser);
