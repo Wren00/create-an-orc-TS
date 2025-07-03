@@ -5,7 +5,7 @@ import {CreateOrc} from "../interfaces/orc";
 
 // PRIVATE admin function that retrieves library of created orcs
 
-async function getAllOrcsAdmin(): Promise<{ orcId: bigint, name: string, orcImagesId: bigint }[]> {
+async function getAllOrcsAdmin(): Promise<{ orcId: number, name: string, orcImagesId: number }[]> {
     try {
         const allOrcs = await prisma.orc.findMany({
             select: {
@@ -14,7 +14,7 @@ async function getAllOrcsAdmin(): Promise<{ orcId: bigint, name: string, orcImag
                 orcImagesId: true
             }
         });
-        return  allOrcs.map((orc): { orcId: bigint; name: string, orcImagesId: bigint } => ({
+        return  allOrcs.map((orc): { orcId: number; name: string, orcImagesId: number } => ({
             orcId: orc.id,
             name: orc.name,
             orcImagesId: orc.orcImagesId
@@ -25,7 +25,7 @@ async function getAllOrcsAdmin(): Promise<{ orcId: bigint, name: string, orcImag
     }
 }
 
-async function getOrcById(orcId: bigint) {
+async function getOrcById(orcId: number) {
     try {
         const orcObject = await prisma.orc.findUnique({
             where: { id: orcId },
@@ -48,12 +48,12 @@ async function getOrcById(orcId: bigint) {
     }
 }
 
-async function getOrcsByUserId(userId: bigint): Promise<{ orcId: bigint; name: string; orcImagesId: bigint }[]> {
+async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: string; orcImagesId: number }[]> {
     try {
         const orcsByUser = await prisma.orc.findMany({
             where: { userId: userId },
         });
-        return  orcsByUser.map((orc): { orcId: bigint; name: string, description: string, orcImagesId: bigint } => ({
+        return  orcsByUser.map((orc): { orcId: number; name: string, description: string, orcImagesId: number } => ({
             orcId: orc.id,
             name: orc.name,
             description: orc.description,
@@ -93,7 +93,7 @@ async function saveOrc(orc: CreateOrc) {
 
 //DELETE function
 
-async function deleteOrcById(orcId: bigint) {
+async function deleteOrcById(orcId: number) {
     let deletedOrc;
     try {
         deletedOrc = await prisma.orc.delete({

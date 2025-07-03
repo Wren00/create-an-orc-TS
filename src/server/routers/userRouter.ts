@@ -15,8 +15,8 @@ UserRouter.get("/getUserById/:id", UserController.getUserById);
 
 //PRIVATE endpoints
 
-UserRouter.put("/updateUserDetails", UserController.updateUserDetails);
-UserRouter.put("/updateAdminUserDetails", UserController.updateUserAsAdmin);
+UserRouter.patch("/updateUserDetails", UserController.updateUserDetails);
+UserRouter.patch("/updateAdminUserDetails", UserController.updateUserAsAdmin);
 UserRouter.post("/createUser", UserController.createUser);
 UserRouter.put("/deleteUserById", UserController.deleteUserById);
 

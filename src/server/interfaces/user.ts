@@ -1,23 +1,25 @@
 import { Role } from '@prisma/client';
 
 interface User {
-    userId: bigint;
+    userId: number;
     userName: string;
     emailAddress: string;
     userPassword: string;
     availableTokens: number;
     userRole: Role;
-    profileId: bigint;
+    profileId: number;
 }
 
 interface CreateUser {
     userName: string;
     emailAddress: string;
     userPassword: string;
+    availableTokens?: number;
+    userRole?: Role;
 }
 
 interface UpdateUserInput {
-    userId: bigint;
+    userId: number;
     userName?: string;
     emailAddress?: string;
     userPassword?: string;

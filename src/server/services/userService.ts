@@ -23,7 +23,7 @@ async function getAllUsers(): Promise<{ userId: string; userName: string }[]> {
     }
 }
 
-async function getUserById(userId: bigint) {
+async function getUserById(userId: number) {
     try {
         const userObject = await prisma.user.findUnique({
             where: { id: userId },
@@ -59,7 +59,7 @@ async function getUserByName(nameSearch: string): Promise<User[]> {
         });
     } catch (error) {
         console.error("Error fetching users:", error);
-        throw error; // better to throw so controller can catch
+        throw error;
     }
 
     return userArray.map((x) => ({
@@ -135,22 +135,24 @@ async function createUser(user: CreateUser) {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(user.userPassword, salt);
 
+        const profile = await prisma.userProfile.create({ data: {} });
+
+        console.log(profile.id);
+        // profile id updated correctly from already submitted data starts at 3
+
         const newUser = await prisma.user.create({
             data: {
                 userName: user.userName,
                 emailAddress: user.emailAddress,
                 userPassword: hashedPassword,
-                profile: {
-                    create: {} // create and link user profile
-                }
+                profileId: profile.id
             }
         });
 
         const createdUser = {
             userId: newUser.id,
             userName: newUser.userName,
-            emailAddress: newUser.emailAddress,
-            userRole: newUser.role
+            emailAddress: newUser.emailAddress
         };
         return createdUser.userName;
     } catch(error) {
@@ -160,7 +162,7 @@ async function createUser(user: CreateUser) {
 
 //DELETE function
 
-async function deleteUserById(userId: bigint) {
+async function deleteUserById(userId: number) {
     let deletedUser;
     try {
         deletedUser = await prisma.user.delete({

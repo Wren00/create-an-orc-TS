@@ -11,9 +11,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // global BigInt serialisation for routes
 
-(BigInt.prototype as any).toJSON = function () {
-    return this.toString();
-};
+// (BigInt.prototype as any).toJSON = function () {
+//     return this.toString();
+// };
 
 // express routers
 

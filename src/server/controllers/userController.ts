@@ -31,7 +31,7 @@ const getUserByName = async (req: Request, res: Response): Promise<Response> => 
 
 const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const userId = BigInt(req.params["id"]);
+        const userId = Number(req.params["id"]);
         const user = await UserService.getUserById(userId);
         res.status(200).json(user);
     } catch (error) {
@@ -43,6 +43,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction): Pro
 
 const updateUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+        console.log("upodating user");
         const updateDetails: User = req.body;
         const updatedUser = await UserService.updateUserDetails(updateDetails);
         res.status(200).json(updatedUser);

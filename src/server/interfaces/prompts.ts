@@ -1,4 +1,4 @@
 interface Prompts {
-    promptId: bigint;
+    promptId: number;
     adjective: string;
 }

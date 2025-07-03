@@ -25,7 +25,7 @@ const getOrcById = async (req: Request, res: Response, next: NextFunction): Prom
 
 const getOrcsByUserId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const userId = BigInt(req.params["user_id"]);
+        const userId = Number(req.params["user_id"]);
         const orcs = await OrcService.getOrcsByUserId(userId);
         res.status(200).json(orcs);
     } catch (error) {
