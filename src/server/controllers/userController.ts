@@ -12,19 +12,26 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction): Pro
     }
 };
 
-const getUserByName = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getUserByName = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const { userName } = req.body;
+        console.log("HIT getUserByName controller");
+        const userName = req.query.userName as string;
+
+        if (!userName) {
+            return res.status(400).json({ message: "Missing 'userName' query parameter" });
+        }
+
         const users = await UserService.getUserByName(userName);
-        res.status(200).json(users);
+        return res.status(200).json(users);
     } catch (error) {
-        res.status(401).json("Cannot find user name");
+        console.error("Error fetching user by name:", error);
+        return res.status(500).json({ message: "Cannot find user name" });
     }
-}
+};
 
 const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const userId = parseInt(req.params["id"]);
+        const userId = BigInt(req.params["id"]);
         const user = await UserService.getUserById(userId);
         res.status(200).json(user);
     } catch (error) {

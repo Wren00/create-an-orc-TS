@@ -8,8 +8,8 @@ interface Orc {
 }
 
 interface CreateOrc {
-    name: String
-    description: String
+    name: string
+    description: string
     promptCollectionId: bigint
     orcImagesId: bigint
     userId: bigint

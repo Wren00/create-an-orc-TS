@@ -1,0 +1,118 @@
+import {prisma} from "../utils/prisma";
+import {CreateOrc} from "../interfaces/orc";
+
+//GET functions
+
+// PRIVATE admin function that retrieves library of created orcs
+
+async function getAllOrcsAdmin(): Promise<{ orcId: bigint, name: string, orcImagesId: bigint }[]> {
+    try {
+        const allOrcs = await prisma.orc.findMany({
+            select: {
+                id: true,
+                name: true,
+                orcImagesId: true
+            }
+        });
+        return  allOrcs.map((orc): { orcId: bigint; name: string, orcImagesId: bigint } => ({
+            orcId: orc.id,
+            name: orc.name,
+            orcImagesId: orc.orcImagesId
+        }));
+    } catch (error) {
+        console.error("Unable to fetch orcs.", error);
+        throw error;
+    }
+}
+
+async function getOrcById(orcId: bigint) {
+    try {
+        const orcObject = await prisma.orc.findUnique({
+            where: { id: orcId },
+        });
+        // error check if id could not be found, nothing is returned
+        if (!orcObject) {
+            throw new Error(`Orc with ID ${orcId} not found`);
+        }
+
+        return {
+            orcId: orcObject.id,
+            name: orcObject.name,
+            description: orcObject.description,
+            orcImagesId: orcObject.orcImagesId,
+            userId: orcObject.userId
+        };
+    } catch (error) {
+        console.error("Failed to fetch orc:", error);
+        throw error;
+    }
+}
+
+async function getOrcsByUserId(userId: bigint): Promise<{ orcId: bigint; name: string; orcImagesId: bigint }[]> {
+    try {
+        const orcsByUser = await prisma.orc.findMany({
+            where: { userId: userId },
+        });
+        return  orcsByUser.map((orc): { orcId: bigint; name: string, description: string, orcImagesId: bigint } => ({
+            orcId: orc.id,
+            name: orc.name,
+            description: orc.description,
+            orcImagesId: orc.orcImagesId
+        }));
+    } catch (error) {
+        console.error("Unable to fetch orcs.", error);
+        throw error;
+    }
+}
+
+//CREATE function
+
+async function saveOrc(orc: CreateOrc) {
+    try {
+        const newOrc = await prisma.orc.create({
+            data: {
+                name: orc.name,
+                description: orc.description,
+                orcImagesId: orc.orcImagesId,
+                promptsCollectionId: orc.promptCollectionId,
+                userId: orc.userId
+            }
+        });
+
+        return {
+            name: newOrc.name,
+            description: newOrc.description,
+            orcImagesId: newOrc.orcImagesId,
+            promptsCollectionId: newOrc.promptsCollectionId,
+            userId: newOrc.userId
+        };
+    } catch(error) {
+        throw Error("Cannot create orc");
+    }
+}
+
+//DELETE function
+
+async function deleteOrcById(orcId: bigint) {
+    let deletedOrc;
+    try {
+        deletedOrc = await prisma.orc.delete({
+            where: {
+                id: orcId
+            },
+        });
+    } catch (error) {
+        console.log(error);
+    }
+    return deletedOrc;
+}
+
+const OrcService = {
+    getAllOrcsAdmin,
+    getOrcById,
+    getOrcsByUserId,
+    saveOrc,
+    deleteOrcById
+};
+
+export { OrcService };

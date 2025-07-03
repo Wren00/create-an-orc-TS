@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {CreateUser, UpdateUserAdminInput, UpdateUserInput} from '../interfaces/user';
+import {CreateUser, UpdateUserAdminInput, UpdateUserInput, User} from '../interfaces/user';
 import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
 
-async function getAllUsers(): Promise<{ userId: bigint; userName: string }[]> {
+async function getAllUsers(): Promise<{ userId: string; userName: string }[]> {
     try {
         const allUsers = await prisma.user.findMany({
             select: {
@@ -13,8 +13,8 @@ async function getAllUsers(): Promise<{ userId: bigint; userName: string }[]> {
                 userName: true
             }
         });
-        return  allUsers.map((user): { userId: bigint; userName: string } => ({
-            userId: user.id,
+        return  allUsers.map((user): { userId: string; userName: string } => ({
+            userId: user.id.toString(),
             userName: user.userName
         }));
     } catch (error) {
@@ -23,7 +23,7 @@ async function getAllUsers(): Promise<{ userId: bigint; userName: string }[]> {
     }
 }
 
-async function getUserById(userId: number) {
+async function getUserById(userId: bigint) {
     try {
         const userObject = await prisma.user.findUnique({
             where: { id: userId },
@@ -34,7 +34,7 @@ async function getUserById(userId: number) {
         }
 
         return {
-            userId: userObject.id,
+            userId: userObject.id.toString(),
             userName: userObject.userName,
             emailAddress: userObject.emailAddress,
             role: userObject.role
@@ -45,25 +45,34 @@ async function getUserById(userId: number) {
     }
 }
 
-async function getUserByName(nameSearch: string) {
+async function getUserByName(nameSearch: string): Promise<User[]> {
+    let userArray = [];
+
     try {
-        return await prisma.user.findMany({
+        userArray = await prisma.user.findMany({
             where: {
                 userName: {
                     contains: nameSearch,
-                    mode: 'insensitive'
-                }
+                    mode: "insensitive",
+                },
             },
-            select: {
-                id: true,
-                userName: true,
-            }
         });
     } catch (error) {
-        console.error("User search failed:", error);
-        throw error;
+        console.error("Error fetching users:", error);
+        throw error; // better to throw so controller can catch
     }
+
+    return userArray.map((x) => ({
+        userId: x.id,
+        userName: x.userName,
+        emailAddress: x.emailAddress,
+        userPassword: x.userPassword,
+        availableTokens: x.availableTokens,
+        userRole: x.role,
+        profileId: x.profileId,
+    }));
 }
+
 
 //UPDATE function
 
