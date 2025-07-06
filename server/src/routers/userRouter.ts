@@ -4,21 +4,18 @@ import { UserController } from "../controllers/userController";
 
 const UserRouter = Router();
 
-//PUBLIC endpoints
-console.log("UserRouter registered");
+console.log("user router mounted");
 
-UserRouter.get("/getAllUsers", UserController.getAllUsers);
-
+UserRouter.get("/user-list", UserController.getAllUsers);
+UserRouter.get("/fetch-userid/:id", UserController.getUserById);
 // @ts-ignore
-UserRouter.get("/getUserByName", UserController.getUserByName)
-UserRouter.get("/getUserById/:id", UserController.getUserById);
+UserRouter.get("/fetch-username", UserController.getUserByName)
 
-//PRIVATE endpoints
+UserRouter.patch("/update-user", UserController.updateUserDetails);
+UserRouter.patch("/update-user-admin", UserController.updateUserAsAdmin);
 
-UserRouter.patch("/updateUserDetails", UserController.updateUserDetails);
-UserRouter.patch("/updateAdminUserDetails", UserController.updateUserAsAdmin);
-UserRouter.post("/createUser", UserController.createUser);
-UserRouter.put("/deleteUserById", UserController.deleteUserById);
+UserRouter.post("/register", UserController.createUser);
+UserRouter.put("/delete-user", UserController.deleteUserById);
 
 
 export { UserRouter };

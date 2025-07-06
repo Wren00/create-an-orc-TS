@@ -58,7 +58,7 @@ const deleteOrcById = async (req: Request, res: Response, next: NextFunction): P
     res.status(200).json(deletedOrc);
 }
 
-const OrcController = {
+const PromptsController = {
     getAllOrcs,
     getOrcById,
     getOrcsByUserId,
@@ -66,4 +66,4 @@ const OrcController = {
     deleteOrcById
 };
 
-export { OrcController };
+export { PromptsController };

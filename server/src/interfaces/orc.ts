@@ -10,7 +10,7 @@ interface Orc {
 interface CreateOrc {
     name: string
     description: string
-    promptCollectionId: number
+    promptsCollectionId: number
     orcImagesId: number
     userId: number
 }

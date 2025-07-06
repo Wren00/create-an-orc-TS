@@ -68,24 +68,26 @@ async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: s
 //CREATE function
 
 async function saveOrc(orc: CreateOrc) {
+
     try {
         const newOrc = await prisma.orc.create({
             data: {
                 name: orc.name,
                 description: orc.description,
                 orcImagesId: orc.orcImagesId,
-                promptsCollectionId: orc.promptCollectionId,
+                promptsCollectionId: orc.promptsCollectionId,
                 userId: orc.userId
             }
         });
 
-        return {
+        const createdOrc : CreateOrc = {
             name: newOrc.name,
             description: newOrc.description,
             orcImagesId: newOrc.orcImagesId,
             promptsCollectionId: newOrc.promptsCollectionId,
             userId: newOrc.userId
         };
+        return createdOrc;
     } catch(error) {
         throw Error("Cannot create orc");
     }

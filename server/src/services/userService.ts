@@ -150,7 +150,6 @@ async function createUser(user: CreateUser) {
         });
 
         const createdUser = {
-            userId: newUser.id,
             userName: newUser.userName,
             emailAddress: newUser.emailAddress
         };
@@ -163,16 +162,19 @@ async function createUser(user: CreateUser) {
 //DELETE function
 
 async function deleteUserById(userId: number) {
+
     let deletedUser;
+
     try {
         deletedUser = await prisma.user.delete({
             where: {
-                id: userId
+                id: userId,
             },
         });
     } catch (error) {
-        console.log(error);
+        console.error("Error deleting user account:", error);
     }
+
     return deletedUser;
 }
 
