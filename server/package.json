@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "nodemon src/app.ts",
-    "debug": "nodemon --inspect src/app.ts",
+    "debug": "node --inspect -r ts-node/register src/app.ts",
     "test": "jest"
   },
   "prisma": {

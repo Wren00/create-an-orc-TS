@@ -5,11 +5,13 @@ const PromptRouter = express.Router();
 
 console.log("prompt router mounted");
 
-PromptRouter.get("/p-all", PromptController.getAllPrompts);
-PromptRouter.get("/p:id", PromptController.getPromptById);
-PromptRouter.get("/p-value", PromptController.getPromptByAdjective);
+// these api routes should not be accessible directly from the browser
 
-PromptRouter.put("/p-update", PromptController.updatePrompt);
-PromptRouter.post("/p-create", PromptController.createPrompt);
+PromptRouter.get("/", PromptController.getAllPrompts);
+PromptRouter.get("/:id", PromptController.getPromptById);
+PromptRouter.get("/value", PromptController.getPromptByAdjective);
+
+PromptRouter.put("/update", PromptController.updatePrompt);
+PromptRouter.post("/create", PromptController.createPrompt);
 
 export { PromptRouter };

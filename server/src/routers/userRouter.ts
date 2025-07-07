@@ -6,16 +6,15 @@ const UserRouter = Router();
 
 console.log("user router mounted");
 
-UserRouter.get("/user-list", UserController.getAllUsers);
-UserRouter.get("/fetch-userid/:id", UserController.getUserById);
-// @ts-ignore
-UserRouter.get("/fetch-username", UserController.getUserByName)
+UserRouter.get("/", UserController.getAllUsers);
+UserRouter.get("/name", UserController.getUserByName);
+UserRouter.get("/:id", UserController.getUserById);
 
-UserRouter.patch("/update-user", UserController.updateUserDetails);
-UserRouter.patch("/update-user-admin", UserController.updateUserAsAdmin);
+UserRouter.patch("/update", UserController.updateUserDetails);
+UserRouter.patch("/update-admin", UserController.updateUserAsAdmin);
 
 UserRouter.post("/register", UserController.createUser);
-UserRouter.put("/delete-user", UserController.deleteUserById);
+UserRouter.delete("/delete", UserController.deleteUserById);
 
 
 export { UserRouter };
