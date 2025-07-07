@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  VALIDUSER
+  ADMIN
+  DELETED
+  @@map("role")
+}
+
+model UserProfile {
+  id    Int    @id @default(autoincrement())
+  users User[]
+
+  @@map("user_profile")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  userName        String       @unique @map("user_name")
+  emailAddress    String       @unique @map("email_address")
+  userPassword    String       @map("user_password")
+  availableTokens Int          @default(5) @map("available_tokens")
+  role            Role         @default(USER) @map("role")
+  profileId       Int          @map("profile_id")
+  createdAt       DateTime     @map("created_at")
+  updatedAt       DateTime     @map("updated_at")
+  isDeleted       Boolean      @map("is_deleted")
+  profile         UserProfile  @relation(fields: [profileId], references: [id])
+  orcs            Orc[]        @relation("UserOrcs")
+
+  @@map("users")
+}
+
+model OrcHead {
+  id              Int         @id @default(autoincrement())
+  url             String
+  createdAt       DateTime     @map("created_at")
+  updatedAt       DateTime     @map("updated_at")
+  isDeleted       Boolean      @map("is_deleted")
+  orcImages OrcImage[]  @relation("HeadRelation")
+
+  @@map("orc_head")
+}
+
+model OrcTorso {
+  id        Int                @id @default(autoincrement())
+  url       String
+  createdAt       DateTime     @map("created_at")
+  updatedAt       DateTime     @map("updated_at")
+  isDeleted       Boolean      @map("is_deleted")
+  orcImages OrcImage[]  @relation("BodyRelation")
+
+  @@map("orc_torso")
+}
+
+model OrcLegs {
+  id        Int                @id @default(autoincrement())
+  url       String
+  createdAt       DateTime     @map("created_at")
+  updatedAt       DateTime     @map("updated_at")
+  isDeleted       Boolean      @map("is_deleted")
+  orcImages OrcImage[]  @relation("LegsRelation")
+
+  @@map("orc_legs")
+}
+
+model OrcImage {
+  id     Int   @id @default(autoincrement())
+  headId Int
+  bodyId Int
+  legsId Int
+
+  head OrcHead  @relation("HeadRelation", fields: [headId], references: [id])
+  body OrcTorso @relation("BodyRelation", fields: [bodyId], references: [id])
+  legs OrcLegs  @relation("LegsRelation", fields: [legsId], references: [id])
+
+  orcs Orc[]
+
+  @@map("orc_images")
+}
+
+model BackgroundImage {
+  id        Int                @id @default(autoincrement())
+  imageName String             @map("image_name")
+  url       String
+  createdAt       DateTime     @map("created_at")
+  updatedAt       DateTime     @map("updated_at")
+  isDeleted       Boolean      @map("is_deleted")
+
+  @@map("background_image")
+}
+
+model Prompt {
+  id           Int                 @id @default(autoincrement())
+  content   String
+  createdAt       DateTime         @map("created_at")
+  updatedAt       DateTime         @map("updated_at")
+  isDeleted       Boolean          @map("is_deleted")
+  collections1 PromptCollection[] @relation("Prompt1")
+  collections2 PromptCollection[] @relation("Prompt2")
+  collections3 PromptCollection[] @relation("Prompt3")
+
+  @@map("prompts")
+}
+
+model PromptCollection {
+  id        Int  @id @default(autoincrement())
+  prompt1Id Int
+  prompt2Id Int
+  prompt3Id Int
+
+  prompt1 Prompt @relation("Prompt1", fields: [prompt1Id], references: [id])
+  prompt2 Prompt @relation("Prompt2", fields: [prompt2Id], references: [id])
+  prompt3 Prompt @relation("Prompt3", fields: [prompt3Id], references: [id])
+
+  orcs Orc[]
+
+  @@map("prompts_collection")
+}
+
+model Orc {
+  id                  Int          @id @default(autoincrement())
+  name                String
+  description         String
+  promptsCollectionId Int          @map("prompts_collection_id")
+  orcImagesId         Int          @map("orc_images_id")
+  userId              Int          @map("user_id")
+  createdAt       DateTime         @map("created_at")
+  isDeleted       Boolean          @map("is_deleted")
+
+  promptsCollection PromptCollection @relation(fields: [promptsCollectionId], references: [id])
+  orcImages         OrcImage         @relation(fields: [orcImagesId], references: [id])
+  user              User             @relation("UserOrcs", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("orcs")
+}
+
+model Catalogue {
+  id        Int @id @default(autoincrement())
+  syllables String
+  createdAt       DateTime     @map("created_at")
+  updatedAt       DateTime     @map("updated_at")
+  isDeleted       Boolean      @map("is_deleted")
+
+  @@map("catalogue")
+}
