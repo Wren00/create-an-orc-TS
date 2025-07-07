@@ -1,19 +1,20 @@
 import {prisma} from "../utils/prisma";
-import {Prompts} from "../interfaces/prompts";
+import {CreatePrompt, IPrompt, UpdatePrompt} from "../interfaces/prompt";
+import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
 
-async function getAllPrompts(): Promise<{ adjectives: string }[]> {
+async function getAllPrompts(): Promise<{ promptId: string, content: string }[]> {
     try {
-        const allPrompts = await prisma.prompt.findMany({
+        const allPrompts = await prisma.prompts.findMany({
             select: {
                 id: true,
-                adjectives: true
+                content: true
             }
         });
-        return  allPrompts.map((prompt: { id: { toString: () => any; }; adjectives: any; }): { id: string; adjectives: string } => ({
-            id: "",
-            adjectives: ""
+        return  allPrompts.map((prompt: { id: { toString: () => any; }; content: any; }): { promptId: string; content: string } => ({
+            promptId: prompt.id.toString(),
+            content: prompt.content
         }));
     } catch (error) {
         console.error("Unable to fetch prompts.", error);
@@ -23,7 +24,7 @@ async function getAllPrompts(): Promise<{ adjectives: string }[]> {
 
 async function getPromptById(promptId: number) {
     try {
-        const promptObject = await prisma.prompt.findUnique({
+        const promptObject = await prisma.prompts.findUnique({
             where: { id: promptId },
         });
         // error check if id could not be found, nothing is returned
@@ -33,22 +34,22 @@ async function getPromptById(promptId: number) {
 
         return {
             promptId: promptObject.id.toString(),
-            adjective: promptObject.adjectives
+            content: promptObject.content
         };
     } catch (error) {
-        console.error("Failed to fetch prompt:", error);
+        console.error("Failed to fetch prompt: ", error);
         throw error;
     }
 }
 
 
-async function getPromptByAdjective(promptSearch: string): Promise<Prompts[]> {
+async function getPromptByContent(promptSearch: string): Promise<IPrompt[]> {
     let promptArray = [];
 
     try {
-        promptArray = await prisma.prompt.findMany({
+        promptArray = await prisma.prompts.findMany({
             where: {
-                adjectives: {
+                content: {
                     contains: promptSearch,
                     mode: "insensitive",
                 },
@@ -60,22 +61,23 @@ async function getPromptByAdjective(promptSearch: string): Promise<Prompts[]> {
     }
 
     return promptArray.map((x:any) => ({
-        promptId: x.id,
-        adjective: x.adjective
+        promptId: x.promptId,
+        content: x.content,
+        createdAt: x.createdAt,
+        updatedAt: x.updatedAt,
+        isDeleted: x.isDeleted
     }));
 }
 
 
 // UPDATE function
 
-async function updatePrompt(promptToUpdate: Prompts) {
+async function updatePrompt(promptToUpdate: UpdatePrompt) {
     try {
 
-        return await prisma.prompt.update({
+        return await prisma.prompts.update({
             where: {id: promptToUpdate.promptId},
-            data: {
-                adjectives: promptToUpdate.adjective
-            }
+            data: removeUndefined(promptToUpdate)
         });
     } catch (error) {
         console.error("Error updating prompt:", error);
@@ -85,22 +87,17 @@ async function updatePrompt(promptToUpdate: Prompts) {
 
 //CREATE function
 
-async function createPrompt(prompt : Prompts) {
+async function createPrompt(prompt: CreatePrompt) {
+
     try {
 
-        const newPrompt = await prisma.prompt.create({
+        return await prisma.prompts.create({
             data: {
-                id: prompt.promptId,
-                adjectives: prompt.adjective
+                content: prompt.content
             }
         });
-
-        return {
-            id: newPrompt.id,
-            adjective: newPrompt.adjectives
-        }
     } catch(error) {
-        throw Error("Cannot create user");
+        throw Error("Cannot create prompt.");
     }
 }
 
@@ -111,7 +108,7 @@ async function deletePromptById(promptId: number) {
     let deletedPrompt;
 
     try {
-        deletedPrompt = await prisma.prompt.delete({
+        deletedPrompt = await prisma.prompts.delete({
             where: {
                 id: promptId,
             },
@@ -126,7 +123,7 @@ async function deletePromptById(promptId: number) {
 const PromptService = {
     getAllPrompts,
     getPromptById,
-    getPromptByAdjective,
+    getPromptByAdjective: getPromptByContent,
     updatePrompt,
     createPrompt,
     deletePromptById

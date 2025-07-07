@@ -7,148 +7,157 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  VALIDUSER
-  ADMIN
-  DELETED
-  @@map("role")
-}
-
 model UserProfile {
-  id    Int    @id @default(autoincrement())
+  id    Int    @id(map: "user_profile_pk") @default(autoincrement())
   users User[]
 
   @@map("user_profile")
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  userName        String       @unique @map("user_name")
-  emailAddress    String       @unique @map("email_address")
-  userPassword    String       @map("user_password")
-  availableTokens Int          @default(5) @map("available_tokens")
-  role            Role         @default(USER) @map("role")
-  profileId       Int          @map("profile_id")
-  createdAt       DateTime     @map("created_at")
-  updatedAt       DateTime     @map("updated_at")
-  isDeleted       Boolean      @map("is_deleted")
-  profile         UserProfile  @relation(fields: [profileId], references: [id])
-  orcs            Orc[]        @relation("UserOrcs")
+  id              Int         @id(map: "users_pk") @default(autoincrement())
+  userName        String      @unique @map("user_name")
+  emailAddress    String      @unique @map("email_address")
+  userPassword    String      @map("user_password")
+  availableTokens Int         @default(5) @map("available_tokens")
+  role            Role        @default(USER) @map("role")
+  profileId       Int         @default(autoincrement()) @map("profile_id")
+  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  isdeleted      Boolean     @default(false)
+  orcs            Orc[]       @relation("UserOrcs")
+  profile         UserProfile @relation(fields: [profileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_profile_fk")
 
   @@map("users")
 }
 
 model OrcHead {
-  id              Int         @id @default(autoincrement())
-  url             String
-  createdAt       DateTime     @map("created_at")
-  updatedAt       DateTime     @map("updated_at")
-  isDeleted       Boolean      @map("is_deleted")
-  orcImages OrcImage[]  @relation("HeadRelation")
+  id         Int        @id(map: "orc_head_images_pk") @default(autoincrement())
+  url        String
+  createdAt DateTime?  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime?  @default(now()) @db.Timestamptz(6)
+  isDeleted Boolean    @default(false)
+  orc_images OrcImage[]
 
   @@map("orc_head")
 }
 
 model OrcTorso {
-  id        Int                @id @default(autoincrement())
-  url       String
-  createdAt       DateTime     @map("created_at")
-  updatedAt       DateTime     @map("updated_at")
-  isDeleted       Boolean      @map("is_deleted")
-  orcImages OrcImage[]  @relation("BodyRelation")
+  id         Int        @id(map: "orc_torso_images_pk") @default(autoincrement())
+  url        String
+  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  isDeleted      Boolean     @default(false)
+  orc_images OrcImage[]
 
   @@map("orc_torso")
 }
 
 model OrcLegs {
-  id        Int                @id @default(autoincrement())
-  url       String
-  createdAt       DateTime     @map("created_at")
-  updatedAt       DateTime     @map("updated_at")
-  isDeleted       Boolean      @map("is_deleted")
-  orcImages OrcImage[]  @relation("LegsRelation")
+  id         Int        @id(map: "orc_legs_images_pk") @default(autoincrement())
+  url        String
+  created_at DateTime?  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?  @default(now()) @db.Timestamptz(6)
+  is_deleted Boolean    @default(false)
+  orc_images OrcImage[]
 
   @@map("orc_legs")
 }
 
 model OrcImage {
-  id     Int   @id @default(autoincrement())
-  headId Int
-  bodyId Int
-  legsId Int
-
-  head OrcHead  @relation("HeadRelation", fields: [headId], references: [id])
-  body OrcTorso @relation("BodyRelation", fields: [bodyId], references: [id])
-  legs OrcLegs  @relation("LegsRelation", fields: [legsId], references: [id])
-
-  orcs Orc[]
+  id        Int       @id(map: "orc_images_pk") @default(autoincrement())
+  head      Int?
+  body      Int?
+  legs      Int?
+  orc_torso OrcTorso? @relation(fields: [body], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "body_image_fk")
+  orc_head  OrcHead?  @relation(fields: [head], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "head_image_fk")
+  orc_legs  OrcLegs?  @relation(fields: [legs], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "legs_image_fk")
+  orcs      Orc[]
 
   @@map("orc_images")
 }
 
-model BackgroundImage {
-  id        Int                @id @default(autoincrement())
-  imageName String             @map("image_name")
-  url       String
-  createdAt       DateTime     @map("created_at")
-  updatedAt       DateTime     @map("updated_at")
-  isDeleted       Boolean      @map("is_deleted")
-
-  @@map("background_image")
-}
-
-model Prompt {
-  id           Int                 @id @default(autoincrement())
-  content   String
-  createdAt       DateTime         @map("created_at")
-  updatedAt       DateTime         @map("updated_at")
-  isDeleted       Boolean          @map("is_deleted")
-  collections1 PromptCollection[] @relation("Prompt1")
-  collections2 PromptCollection[] @relation("Prompt2")
-  collections3 PromptCollection[] @relation("Prompt3")
+model Prompts {
+  id                                                     Int                @id(map: "prompts_pk") @default(autoincrement())
+  content                                                String
+  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  isDeleted      Boolean     @default(false)
+  prompts_collection_prompts_collection_prompt1Toprompts PromptsCollection[] @relation("prompts_collection_prompt1Toprompts")
+  prompts_collection_prompts_collection_prompt2Toprompts PromptsCollection[] @relation("prompts_collection_prompt2Toprompts")
+  prompts_collection_prompts_collection_prompt3Toprompts PromptsCollection[] @relation("prompts_collection_prompt3Toprompts")
 
   @@map("prompts")
 }
 
-model PromptCollection {
-  id        Int  @id @default(autoincrement())
-  prompt1Id Int
-  prompt2Id Int
-  prompt3Id Int
-
-  prompt1 Prompt @relation("Prompt1", fields: [prompt1Id], references: [id])
-  prompt2 Prompt @relation("Prompt2", fields: [prompt2Id], references: [id])
-  prompt3 Prompt @relation("Prompt3", fields: [prompt3Id], references: [id])
-
-  orcs Orc[]
+model PromptsCollection {
+  id                                          Int     @id(map: "prompts_collection_pk") @default(autoincrement())
+  prompt1                                     Int?
+  prompt2                                     Int?
+  prompt3                                     Int?
+  orcs                                        Orc[]
+  prompts_prompts_collection_prompt1Toprompts Prompts? @relation("prompts_collection_prompt1Toprompts", fields: [prompt1], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompt1_id_fk")
+  prompts_prompts_collection_prompt2Toprompts Prompts? @relation("prompts_collection_prompt2Toprompts", fields: [prompt2], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompt2_id_fk")
+  prompts_prompts_collection_prompt3Toprompts Prompts? @relation("prompts_collection_prompt3Toprompts", fields: [prompt3], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompt3_id_fk")
 
   @@map("prompts_collection")
 }
 
 model Orc {
-  id                  Int          @id @default(autoincrement())
+  id                  Int              @id(map: "orcs_pk") @default(autoincrement())
   name                String
   description         String
-  promptsCollectionId Int          @map("prompts_collection_id")
-  orcImagesId         Int          @map("orc_images_id")
-  userId              Int          @map("user_id")
-  createdAt       DateTime         @map("created_at")
-  isDeleted       Boolean          @map("is_deleted")
-
-  promptsCollection PromptCollection @relation(fields: [promptsCollectionId], references: [id])
-  orcImages         OrcImage         @relation(fields: [orcImagesId], references: [id])
-  user              User             @relation("UserOrcs", fields: [userId], references: [id], onDelete: Cascade)
+  promptsCollectionId Int              @default(autoincrement()) @map("prompts_collection_id")
+  orcImagesId         Int              @default(autoincrement()) @map("orc_images_id")
+  userId              Int              @default(autoincrement()) @map("user_id")
+  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  isDeleted      Boolean     @default(false)
+  orcImages           OrcImage         @relation(fields: [orcImagesId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orc_images_id_fk")
+  promptsCollection   PromptsCollection @relation(fields: [promptsCollectionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompts_collection_id_fk")
+  user                User             @relation("UserOrcs", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_id_fk")
 
   @@map("orcs")
 }
 
 model Catalogue {
-  id        Int @id @default(autoincrement())
-  syllables String
-  createdAt       DateTime     @map("created_at")
-  updatedAt       DateTime     @map("updated_at")
-  isDeleted       Boolean      @map("is_deleted")
+  id         Int       @id(map: "catalogue_pk") @default(autoincrement())
+  syllables  String
+  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  isDeleted      Boolean     @default(false)
 
   @@map("catalogue")
+}
+
+model BackgroundImages {
+  id         Int       @id(map: "background_images_pk") @default(autoincrement())
+  image_name String
+  url        String
+  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
+  isDeleted      Boolean     @default(false)
+}
+
+model flyway_schema_history {
+  installed_rank Int      @id(map: "flyway_schema_history_pk")
+  version        String?  @db.VarChar(50)
+  description    String   @db.VarChar(200)
+  type           String   @db.VarChar(20)
+  script         String   @db.VarChar(1000)
+  checksum       Int?
+  installed_by   String   @db.VarChar(100)
+  installed_on   DateTime @default(now()) @db.Timestamp(6)
+  execution_time Int
+  success        Boolean
+
+  @@index([success], map: "flyway_schema_history_s_idx")
+}
+
+enum Role {
+  USER
+  VALIDUSER
+  ADMIN
+  DELETED
+
+  @@map("role")
 }

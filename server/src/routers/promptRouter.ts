@@ -11,7 +11,7 @@ PromptRouter.get("/", PromptController.getAllPrompts);
 PromptRouter.get("/:id", PromptController.getPromptById);
 PromptRouter.get("/value", PromptController.getPromptByAdjective);
 
-PromptRouter.put("/update", PromptController.updatePrompt);
-PromptRouter.post("/create", PromptController.createPrompt);
+PromptRouter.put("/:id", PromptController.updatePrompt);
+PromptRouter.post("/", PromptController.createPrompt);
 
 export { PromptRouter };

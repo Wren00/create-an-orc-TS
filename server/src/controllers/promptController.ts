@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import { PromptService } from "../services/promptService";
-import {Prompts} from "../interfaces/prompts";
+import {CreatePrompt, IPrompt, UpdatePrompt} from "../interfaces/prompt";
 
 
 //this admin function needs authentication for client use
@@ -16,7 +16,7 @@ const getAllPrompts = async (req: Request, res: Response): Promise<void> => {
 
 const getPromptById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { promptId } = req.body;
+        const promptId = Number(req.params["id"]);
         const prompt = await PromptService.getPromptById(promptId)
         res.status(200).json(prompt);
     } catch (error) {
@@ -40,7 +40,7 @@ const getPromptByAdjective = async (req: Request, res: Response): Promise<void> 
 
 const updatePrompt = async (req: Request, res: Response): Promise<void> => {
     try {
-        const updatePrompt = req.body;
+        const updatePrompt: UpdatePrompt = req.body;
         const updatedPrompt = await PromptService.updatePrompt(updatePrompt);
         res.status(200).json(updatedPrompt);
     } catch (error) {
@@ -54,7 +54,7 @@ const updatePrompt = async (req: Request, res: Response): Promise<void> => {
 
 const createPrompt = async (req: Request, res: Response): Promise<void> => {
     try {
-        const newPrompt: Prompts = req.body;
+        const newPrompt: CreatePrompt = req.body;
         const createdPrompt = await PromptService.createPrompt(newPrompt);
         res.status(200).json(createdPrompt);
     } catch (error) {

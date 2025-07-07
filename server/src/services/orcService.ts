@@ -48,23 +48,6 @@ async function getOrcById(orcId: number) {
     }
 }
 
-async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: string; orcImagesId: number }[]> {
-    try {
-        const orcsByUser = await prisma.orc.findMany({
-            where: { userId: userId },
-        });
-        return  orcsByUser.map((orc: { id: any; name: any; description: any; orcImagesId: any; }): { orcId: number; name: string, description: string, orcImagesId: number } => ({
-            orcId: orc.id,
-            name: orc.name,
-            description: orc.description,
-            orcImagesId: orc.orcImagesId
-        }));
-    } catch (error) {
-        console.error("Unable to fetch orcs.", error);
-        throw error;
-    }
-}
-
 //CREATE function
 
 async function saveOrc(orc: CreateOrc) {
@@ -112,7 +95,6 @@ async function deleteOrcById(orcId: number) {
 const OrcService = {
     getAllOrcsAdmin,
     getOrcById,
-    getOrcsByUserId,
     saveOrc,
     deleteOrcById
 };

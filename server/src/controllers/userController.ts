@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import { UserService } from "../services/userService";
 import { User } from "../interfaces/user";
 import { CreateUser } from "../interfaces/user";
+import {OrcService} from "../services/orcService";
 
 const getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -37,6 +38,17 @@ const getUserById = async (req: Request, res: Response): Promise<void> => {
     } catch (error) {
         console.error("Error fetching user id: ", error);
         res.status(500).json({ message: "Could not find user id."});
+    }
+}
+
+const getOrcsByUserId = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = Number(req.params["user_id"]);
+        const orcs = await UserService.getOrcsByUserId(userId);
+        res.status(200).json(orcs);
+    } catch (error) {
+        console.error("Error fetching orcs by user: ", error);
+        res.status(500).json({ message: "Could not retrieve orcs by user id."});
     }
 }
 
@@ -97,6 +109,7 @@ const UserController = {
     getAllUsers,
     getUserById,
     getUserByName,
+    getOrcsByUserId,
     createUser,
     updateUserDetails,
     updateUserAsAdmin,

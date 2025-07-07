@@ -8,10 +8,10 @@ interface Orc {
 }
 
 interface CreateOrc {
-    name: string
-    description: string
-    promptsCollectionId: number
-    orcImagesId: number
-    userId: number
+    name: string;
+    description: string;
+    promptsCollectionId: number;
+    orcImagesId: number;
+    userId: number;
 }
 export { Orc, CreateOrc };

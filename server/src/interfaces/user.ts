@@ -10,6 +10,9 @@ interface User {
     availableTokens: number;
     userRole: Role;
     profileId: number;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
 }
 
 interface CreateUser {
