@@ -22,9 +22,8 @@ model User {
   availableTokens Int         @default(5) @map("available_tokens")
   role            Role        @default(USER) @map("role")
   profileId       Int         @default(autoincrement()) @map("profile_id")
-  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  isdeleted      Boolean     @default(false)
+  createdAt      DateTime?   @default(now()) @db.Timestamptz(6) @map ("created_at")
+  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6) @map ("updated_at")
   orcs            Orc[]       @relation("UserOrcs")
   profile         UserProfile @relation(fields: [profileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_profile_fk")
 
@@ -34,10 +33,9 @@ model User {
 model OrcHead {
   id         Int        @id(map: "orc_head_images_pk") @default(autoincrement())
   url        String
-  createdAt DateTime?  @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime?  @default(now()) @db.Timestamptz(6)
-  isDeleted Boolean    @default(false)
-  orc_images OrcImage[]
+  createdAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("created_at")
+  updatedAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("updated_at")
+  orcImages  OrcImage[]
 
   @@map("orc_head")
 }
@@ -45,10 +43,9 @@ model OrcHead {
 model OrcTorso {
   id         Int        @id(map: "orc_torso_images_pk") @default(autoincrement())
   url        String
-  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  isDeleted      Boolean     @default(false)
-  orc_images OrcImage[]
+  createdAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("created_at")
+  updatedAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("updated_at")
+  orcImages  OrcImage[]
 
   @@map("orc_torso")
 }
@@ -56,33 +53,31 @@ model OrcTorso {
 model OrcLegs {
   id         Int        @id(map: "orc_legs_images_pk") @default(autoincrement())
   url        String
-  created_at DateTime?  @default(now()) @db.Timestamptz(6)
-  updated_at DateTime?  @default(now()) @db.Timestamptz(6)
-  is_deleted Boolean    @default(false)
-  orc_images OrcImage[]
+  createdAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("created_at")
+  updatedAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("updated_at")
+  orcImages  OrcImage[]
 
   @@map("orc_legs")
 }
 
 model OrcImage {
-  id        Int       @id(map: "orc_images_pk") @default(autoincrement())
-  head      Int?
-  body      Int?
-  legs      Int?
-  orc_torso OrcTorso? @relation(fields: [body], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "body_image_fk")
-  orc_head  OrcHead?  @relation(fields: [head], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "head_image_fk")
-  orc_legs  OrcLegs?  @relation(fields: [legs], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "legs_image_fk")
-  orcs      Orc[]
+  id       Int       @id(map: "orc_images_pk") @default(autoincrement())
+  head     Int?
+  body     Int?
+  legs     Int?
+  orcTorso OrcTorso? @relation(fields: [body], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "body_image_fk")
+  orcHead  OrcHead?  @relation(fields: [head], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "head_image_fk")
+  orcLegs  OrcLegs?  @relation(fields: [legs], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "legs_image_fk")
+  orcs     Orc[]
 
   @@map("orc_images")
 }
 
 model Prompts {
-  id                                                     Int                @id(map: "prompts_pk") @default(autoincrement())
+  id                                                     Int                 @id(map: "prompts_pk") @default(autoincrement())
   content                                                String
-  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  isDeleted      Boolean     @default(false)
+  createdAt                                             DateTime?           @default(now()) @db.Timestamptz(6) @map ("created_at")
+  updatedAt                                             DateTime?           @default(now()) @db.Timestamptz(6) @map ("updated_at")
   prompts_collection_prompts_collection_prompt1Toprompts PromptsCollection[] @relation("prompts_collection_prompt1Toprompts")
   prompts_collection_prompts_collection_prompt2Toprompts PromptsCollection[] @relation("prompts_collection_prompt2Toprompts")
   prompts_collection_prompts_collection_prompt3Toprompts PromptsCollection[] @relation("prompts_collection_prompt3Toprompts")
@@ -91,30 +86,29 @@ model Prompts {
 }
 
 model PromptsCollection {
-  id                                          Int     @id(map: "prompts_collection_pk") @default(autoincrement())
+  id                                          Int      @id(map: "prompts_collection_pk") @default(autoincrement())
   prompt1                                     Int?
   prompt2                                     Int?
   prompt3                                     Int?
   orcs                                        Orc[]
-  prompts_prompts_collection_prompt1Toprompts Prompts? @relation("prompts_collection_prompt1Toprompts", fields: [prompt1], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompt1_id_fk")
-  prompts_prompts_collection_prompt2Toprompts Prompts? @relation("prompts_collection_prompt2Toprompts", fields: [prompt2], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompt2_id_fk")
-  prompts_prompts_collection_prompt3Toprompts Prompts? @relation("prompts_collection_prompt3Toprompts", fields: [prompt3], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompt3_id_fk")
+  prompts_prompts_collection_prompt1Toprompts Prompts? @relation("prompts_collection_prompt1Toprompts", fields: [prompt1], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "prompt1_id_fk")
+  prompts_prompts_collection_prompt2Toprompts Prompts? @relation("prompts_collection_prompt2Toprompts", fields: [prompt2], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "prompt2_id_fk")
+  prompts_prompts_collection_prompt3Toprompts Prompts? @relation("prompts_collection_prompt3Toprompts", fields: [prompt3], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "prompt3_id_fk")
 
   @@map("prompts_collection")
 }
 
 model Orc {
-  id                  Int              @id(map: "orcs_pk") @default(autoincrement())
+  id                  Int               @id(map: "orcs_pk") @default(autoincrement())
   name                String
   description         String
-  promptsCollectionId Int              @default(autoincrement()) @map("prompts_collection_id")
-  orcImagesId         Int              @default(autoincrement()) @map("orc_images_id")
-  userId              Int              @default(autoincrement()) @map("user_id")
-  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  isDeleted      Boolean     @default(false)
-  orcImages           OrcImage         @relation(fields: [orcImagesId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orc_images_id_fk")
+  promptsCollectionId Int               @default(autoincrement()) @map("prompts_collection_id")
+  orcImagesId         Int               @default(autoincrement()) @map("orc_images_id")
+  userId              Int               @default(autoincrement()) @map("user_id")
+  createdAt          DateTime?          @default(now()) @db.Timestamptz(6) @map ("created_at")
+  orcImages           OrcImage          @relation(fields: [orcImagesId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orc_images_id_fk")
   promptsCollection   PromptsCollection @relation(fields: [promptsCollectionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompts_collection_id_fk")
-  user                User             @relation("UserOrcs", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_id_fk")
+  user                User              @relation("UserOrcs", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_id_fk")
 
   @@map("orcs")
 }
@@ -122,20 +116,10 @@ model Orc {
 model Catalogue {
   id         Int       @id(map: "catalogue_pk") @default(autoincrement())
   syllables  String
-  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  isDeleted      Boolean     @default(false)
+  createdAt DateTime? @default(now()) @db.Timestamptz(6) @map ("created_at")
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6) @map ("updated_at")
 
   @@map("catalogue")
-}
-
-model BackgroundImages {
-  id         Int       @id(map: "background_images_pk") @default(autoincrement())
-  image_name String
-  url        String
-  createdAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6)
-  isDeleted      Boolean     @default(false)
 }
 
 model flyway_schema_history {
@@ -151,6 +135,14 @@ model flyway_schema_history {
   success        Boolean
 
   @@index([success], map: "flyway_schema_history_s_idx")
+}
+
+model background_images {
+  id         Int       @id(map: "background_images_pk") @default(autoincrement())
+  image_name String
+  url        String
+  createdAt DateTime? @default(now()) @db.Timestamptz(6) @map ("created_at")
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6) @map ("updated_at")
 }
 
 enum Role {

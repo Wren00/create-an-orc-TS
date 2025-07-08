@@ -1,5 +1,5 @@
 import {prisma} from "../utils/prisma";
-import {CreatePrompt, IPrompt, UpdatePrompt} from "../interfaces/prompt";
+import {CreatePrompt, UpdatePrompt} from "../interfaces/prompt";
 import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
@@ -9,8 +9,8 @@ async function getAllPrompts(): Promise<{ promptId: string, content: string }[]>
         const allPrompts = await prisma.prompts.findMany({
             select: {
                 id: true,
-                content: true
-            }
+                content: true,
+            },
         });
         return  allPrompts.map((prompt: { id: { toString: () => any; }; content: any; }): { promptId: string; content: string } => ({
             promptId: prompt.id.toString(),
@@ -41,34 +41,6 @@ async function getPromptById(promptId: number) {
         throw error;
     }
 }
-
-
-async function getPromptByContent(promptSearch: string): Promise<IPrompt[]> {
-    let promptArray = [];
-
-    try {
-        promptArray = await prisma.prompts.findMany({
-            where: {
-                content: {
-                    contains: promptSearch,
-                    mode: "insensitive",
-                },
-            },
-        });
-    } catch (error) {
-        console.error("Error fetching prompts:", error);
-        throw error;
-    }
-
-    return promptArray.map((x:any) => ({
-        promptId: x.promptId,
-        content: x.content,
-        createdAt: x.createdAt,
-        updatedAt: x.updatedAt,
-        isDeleted: x.isDeleted
-    }));
-}
-
 
 // UPDATE function
 
@@ -103,27 +75,20 @@ async function createPrompt(prompt: CreatePrompt) {
 
 // //DELETE function
 
-async function deletePromptById(promptId: number) {
-
-    let deletedPrompt;
-
+export async function deletePromptById(promptId: number) {
     try {
-        deletedPrompt = await prisma.prompts.delete({
-            where: {
-                id: promptId,
-            },
+        return await prisma.prompts.delete({
+            where: {id: promptId}
         });
     } catch (error) {
-        console.error("Error deleting this prompt:", error);
+        console.error("Error removing prompt: ", error);
+        throw error;
     }
-
-    return deletedPrompt;
 }
 
 const PromptService = {
     getAllPrompts,
     getPromptById,
-    getPromptByAdjective: getPromptByContent,
     updatePrompt,
     createPrompt,
     deletePromptById

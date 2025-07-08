@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import { PromptService } from "../services/promptService";
-import {CreatePrompt, IPrompt, UpdatePrompt} from "../interfaces/prompt";
+import {CreatePrompt, UpdatePrompt} from "../interfaces/prompt";
 
 
 //this admin function needs authentication for client use
@@ -22,17 +22,6 @@ const getPromptById = async (req: Request, res: Response): Promise<void> => {
     } catch (error) {
         console.error("Error fetching prompt id: ", error);
         res.status(500).json({ message: "Could not find prompt id."});
-    }
-}
-
-const getPromptByAdjective = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { promptAdjective } = req.body;
-        const prompt = await PromptService.getPromptByAdjective(promptAdjective)
-        res.status(200).json(prompt);
-    } catch (error) {
-        console.error("Error fetching prompt value: ", error);
-        res.status(500).json({ message: "Could not find prompt value."});
     }
 }
 
@@ -79,7 +68,6 @@ const deletePromptById = async (req: Request, res: Response): Promise<void> => {
 const PromptController = {
     getAllPrompts,
     getPromptById,
-    getPromptByAdjective,
     updatePrompt,
     createPrompt,
     deletePromptById

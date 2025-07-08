@@ -1,4 +1,4 @@
-interface IPrompt {
+interface Prompt {
     promptId: number;
     content: string;
     createdAt: Date;
@@ -18,4 +18,4 @@ interface UpdatePrompt {
 }
 
 
-export { IPrompt, CreatePrompt, UpdatePrompt };
+export { Prompt, CreatePrompt, UpdatePrompt };

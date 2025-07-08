@@ -34,6 +34,7 @@ UserRouter.get("/name", UserController.getUserByName);
  *                           "userName": "testUser",
  *                           "emailAddress": "email@example.com",
  *                           "role": "USER"
+ *                          }'
  *       204:
  *         description: No content
  */
@@ -77,8 +78,90 @@ UserRouter.get("/:id", UserController.getUserById);
  */
 UserRouter.get("/:userId/orcs", UserController.getOrcsByUserId);
 
+/**
+ * @swagger
+ * /users:
+ *   patch:
+ *     tags: [
+ *       users
+ *     ]
+ *     summary: Updates an existing user with optional fields.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                  type: integer
+ *                  required: true
+ *                  description: the users id
+ *               emailAddress:
+ *                 type: string
+ *                 required: false
+ *                 description: The email for the user
+ *               userName:
+ *                 type: string
+ *                 required: false
+ *                 description: The username for the user
+ *               userPassword:
+ *                 type: string
+ *                 required: false
+ *                 description: The password for the user
+ *     responses:
+ *       400:
+ *         description: Bad Request - required values are missing.
+ *       204:
+ *         description: User Updated
+ */
 
 UserRouter.patch("/", UserController.updateUserDetails);
+
+/**
+ * @swagger
+ * /users:
+ *   patch:
+ *     tags: [
+ *       users
+ *     ]
+ *     summary: Updates an existing user including admin restricted fields.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                  type: integer
+ *                  required: true
+ *                  description: the users id
+ *               emailAddress:
+ *                 type: string
+ *                 required: false
+ *                 description: The email for the user
+ *               userName:
+ *                 type: string
+ *                 required: false
+ *                 description: The username for the user
+ *               userPassword:
+ *                 type: string
+ *                 required: false
+ *                 description: The password for the user
+ *               availableTokens:
+ *                  type: integer
+ *                  required: false
+ *                  description: The number of tokens for AI generation requests
+ *               role:
+ *                  type: Role
+ *                  required: false
+ *                  description: The status of the user in the app
+ *     responses:
+ *       400:
+ *         description: Bad Request - required values are missing.
+ *       204:
+ *         description: User Updated
+ */
+
 UserRouter.patch("/", UserController.updateUserAsAdmin);
 
 /**
