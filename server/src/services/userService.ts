@@ -1,21 +1,23 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {CreateUser, UpdateUserAdmin, UpdateUser, User} from '../interfaces/user';
+import {CreateUser, UpdateUser, UpdateUserAdmin, User} from '../interfaces/user';
 import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
 
-async function getAllUsers(): Promise<{ userId: string; userName: string }[]> {
+async function getAllUsers(): Promise<{ userId: string; userName: string; emailAddress: string}[]> {
     try {
         const allUsers = await prisma.user.findMany({
             select: {
                 id: true,
-                userName: true
+                userName: true,
+                emailAddress: true
             }
         });
-        return  allUsers.map((user: { id: { toString: () => any; }; userName: any; }): { userId: string; userName: string } => ({
+        return  allUsers.map((user: { id: { toString: () => any; }; userName: any; emailAddress: any; }): { userId: string; userName: string; emailAddress: string; } => ({
             userId: user.id.toString(),
-            userName: user.userName
+            userName: user.userName,
+            emailAddress: user.emailAddress
         }));
     } catch (error) {
         console.error("Unable to fetch users.", error);
@@ -62,18 +64,7 @@ async function getUserByName(nameSearch: string): Promise<User[]> {
         throw error;
     }
 
-    return userArray.map((x:any) => ({
-        userId: x.id,
-        userName: x.userName,
-        emailAddress: x.emailAddress,
-        userPassword: x.userPassword,
-        availableTokens: x.availableTokens,
-        userRole: x.role,
-        profileId: x.profileId,
-        createdAt: x.createdAt,
-        updatedAt: x.updatedAt,
-        isDeleted: x.isDeleted
-    }));
+    return userArray.map(mapToUser);
 }
 
 async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: string; orcImagesId: number }[]> {
@@ -132,12 +123,13 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
             const salt = await bcrypt.genSalt();
             dataToUpdate.userPassword = await bcrypt.hash(input.userPassword, salt);
         }
-        const updatedUser = await prisma.user.update({
-            where: { id: input.userId },
+        await prisma.user.update({
+            where: {id: input.userId},
             data: removeUndefined(dataToUpdate),
         });
 
-        return updatedUser;
+        return "User has been successfully updated: " + dataToUpdate.toString();
+
     } catch (error) {
         console.error("Error updating user: ", error);
         throw error;
@@ -146,7 +138,7 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
 
 //CREATE function
 
-async function createUser(user: CreateUser) {
+async function createUser(user: CreateUser): Promise<String> {
     try {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(user.userPassword, salt);
@@ -165,7 +157,7 @@ async function createUser(user: CreateUser) {
             userName: newUser.userName,
             emailAddress: newUser.emailAddress
         };
-        return createdUser.userName;
+        return "User successfully registered: " + createdUser.userName;
     } catch(error) {
         throw Error("Error creating user.");
     }
@@ -187,6 +179,20 @@ async function deleteUserById(userId: number) {
     } catch (error) {
         throw Error("Error deleting user account.");
     }
+}
+
+function mapToUser( user: { id: any; userName: any; emailAddress: any; userPassword: any; availableTokens: any; role: any; profileId: any; createdAt: any; updatedAt: any; } ): User {
+    return {
+        userId: user.id,
+        userName: user.userName,
+        emailAddress: user.emailAddress,
+        userPassword: user.userPassword,
+        availableTokens: user.availableTokens,
+        role: user.role,
+        profileId: user.profileId,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+    };
 }
 
 const UserService = {

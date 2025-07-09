@@ -8,11 +8,10 @@ interface User {
     emailAddress: string;
     userPassword: string;
     availableTokens: number;
-    userRole: Role;
+    role: Role;
     profileId: number;
     createdAt: Date;
     updatedAt: Date;
-    isDeleted: boolean;
 }
 
 interface CreateUser {

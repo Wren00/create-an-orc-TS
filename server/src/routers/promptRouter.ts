@@ -47,7 +47,7 @@ PromptRouter.get("/", PromptController.getAllPrompts);
  *     ]
  *     summary: Returns a single prompt retrieved from the id
  *         parameters:
- *       - name: promptId
+ *       - name: id
  *         in: path
  *         type: integer
  *         description: The promptId used to retrieve the prompt.
@@ -126,28 +126,23 @@ PromptRouter.post("/", validate(validationSchemas.createPrompt), PromptControlle
 
 /**
  * @swagger
- * /prompts:
+ * /prompts/:id:
  *   delete:
  *     tags: [
  *       prompts
  *     ]
- *     summary: Deletes an existing prompt by the id.
- *      requestBody:
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                   id:
- *                   type: integer
- *                   required: true
- *                   description: The id of the prompt to be deleted.
+ *     summary: Deletes a prompt by id
+ *         parameters:
+ *       - name: id
+ *         in: path
+ *         type: integer
+ *         description: The id used to delete the prompt.
  *     responses:
- *       400:
- *         description: Bad Request - required values are missing.
- *       201:
- *         description: Prompt Deleted
+ *       200:
+ *         description: Prompt has been deleted.
+ *       204:
+ *         description: No content
  */
-PromptRouter.delete("/", PromptController.deletePromptById);
+PromptRouter.delete("/:id", PromptController.deletePromptById);
 
 export { PromptRouter };

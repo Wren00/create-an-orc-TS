@@ -42,7 +42,7 @@ const saveOrc = async (req: Request, res: Response): Promise<void> => {
 
 const deleteOrcById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { orcId: orcId } = req.body;
+        const orcId = Number(req.params["id"]);
         const deletedOrc = await OrcService.deleteOrcById(orcId)
         res.status(200).json(deletedOrc);
     } catch (error) {

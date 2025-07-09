@@ -15,12 +15,7 @@ const getAllUsers = async (req: Request, res: Response): Promise<void> => {
 
 const getUserByName = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userName = req.query.userName as string;
-
-        if (!userName) {
-            res.status(400).json({ message: "Missing 'userName' query parameter" });
-        }
-
+        const userName = req.body.userName
         const users = await UserService.getUserByName(userName);
         res.status(200).json(users);
     } catch (error) {
@@ -94,7 +89,7 @@ const createUser = async (req: Request, res: Response): Promise<void> => {
 
 const deleteUserById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const {userId: userId} = req.body;
+        const userId = Number(req.params["id"]);
         const deletedUser = await UserService.deleteUserById(userId);
         res.status(200).json(deletedUser);
     } catch (error) {

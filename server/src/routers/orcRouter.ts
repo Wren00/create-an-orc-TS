@@ -133,6 +133,6 @@ OrcRouter.post("/", validate(validationSchemas.createOrc), OrcController.saveOrc
  *       201:
  *         description: Orc Deleted
  */
-OrcRouter.delete("/", OrcController.deleteOrcById);
+OrcRouter.delete("/:id", OrcController.deleteOrcById);
 
 export { OrcRouter };

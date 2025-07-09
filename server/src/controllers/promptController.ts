@@ -56,7 +56,7 @@ const createPrompt = async (req: Request, res: Response): Promise<void> => {
 
 const deletePromptById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const {promptId: promptId} = req.body;
+        const promptId = Number(req.params["id"]);
         const deletedPrompt = await PromptService.deletePromptById(promptId)
         res.status(200).json(deletedPrompt);
     } catch (error) {

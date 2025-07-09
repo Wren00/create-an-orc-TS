@@ -8,12 +8,69 @@ const UserRouter = Router();
 
 console.log("user router mounted");
 
-UserRouter.get("/", UserController.getAllUsers);
-UserRouter.get("/name", UserController.getUserByName);
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     tags: [
+ *       users
+ *     ]
+ *     summary: Returns an array of userIds and userNames for registered users
+ *         parameters:
+ *       - name: userId
+ *         in: path
+ *         type: integer
+ *         description: An array of users with userId/userName
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             examples:
+ *               jsonObject:
+ *                 summary: An example JSON response
+ *                 value: '[{ "id": 1,
+ *                            "userName": "testadmin"
+ *                           {"id": 3,
+ *                            "userName": "newUser"}]'
+ *       204:
+ *         description: No content
+ */
+UserRouter.route("/").get(UserController.getAllUsers);
 
 /**
  * @swagger
- * /users/:id:
+ * /users:
+ *   get:
+ *     tags: [
+ *       users
+ *     ]
+ *     summary: Returns a user searched by their userName
+ *         parameters:
+ *       - name: userName
+ *         in: path
+ *         type: string
+ *         description: All users with userNames matching the requested value
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             examples:
+ *               jsonObject:
+ *                 summary: An example JSON response
+ *                 value: '[{ "id": 1,
+ *                            "userName": "testadmin"
+ *                           {"id": 3,
+ *                            "userName": "testuser"}]'
+ *       204:
+ *         description: No content
+ */
+UserRouter.route("/").get(UserController.getUserByName);
+
+/**
+ * @swagger
+ * /users/{id}
  *   get:
  *     tags: [
  *       users
@@ -44,7 +101,7 @@ UserRouter.get("/:id", UserController.getUserById);
 
 /**
  * @swagger
- * /users/:userId/orcs
+ * /users/{id}/orcs:
  *   get:
  *     tags: [
  *       users
@@ -116,9 +173,7 @@ UserRouter.get("/:userId/orcs", UserController.getOrcsByUserId);
  *       204:
  *         description: User Updated
  */
-
 UserRouter.patch("/", validate(validationSchemas.updateUser), UserController.updateUserDetails);
-
 
 /**
  * @swagger
@@ -164,7 +219,6 @@ UserRouter.patch("/", validate(validationSchemas.updateUser), UserController.upd
  *       204:
  *         description: User Updated
  */
-
 UserRouter.patch("/", validate(validationSchemas.updateUserAsAdmin), UserController.updateUserAsAdmin);
 
 /**
@@ -203,29 +257,24 @@ UserRouter.post("/", validate(validationSchemas.createUser), UserController.crea
 
 /**
  * @swagger
- * /users
- *   delete:
+ * /users/{id}
+ *   get:
  *     tags: [
  *       users
  *     ]
- *     summary: Deletes an existing user.
- *      requestBody:
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   required: true
- *                   description: The id of the user to be deleted.
- *     responses:
- *       400:
- *         description: Bad Request - required values are missing.
- *       201:
- *         description: User Deleted
+ *     summary: Deletes a user by their id.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         type: integer
+ *         description: The id of the user to be deleted.
+ * *     responses:
+ *  *       400:
+ *  *         description: Bad Request
+ *  *       201:
+ *  *         description: Character Deleted
  */
-UserRouter.delete("/", UserController.deleteUserById);
+UserRouter.delete("/:id", UserController.deleteUserById);
 
 
 export { UserRouter };
