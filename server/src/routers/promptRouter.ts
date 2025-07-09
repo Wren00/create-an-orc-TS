@@ -1,7 +1,5 @@
 import express from "express";
 import { PromptController} from "../controllers/promptController";
-import {validate} from "express-validation";
-import {validationSchemas} from "../utils/validationSchemas";
 
 const PromptRouter = express.Router();
 
@@ -36,7 +34,7 @@ console.log("prompt router mounted");
  *       204:
  *         description: No content
  */
-PromptRouter.get("/", PromptController.getAllPrompts);
+PromptRouter.route("/").get(PromptController.getAllPrompts);
 
 /**
  * @swagger
@@ -66,7 +64,7 @@ PromptRouter.get("/", PromptController.getAllPrompts);
  *         description: No content
  */
 
-PromptRouter.get("/:id", PromptController.getPromptById);
+PromptRouter.route("/:id").get(PromptController.getPromptById);
 
 /**
  * @swagger
@@ -96,7 +94,7 @@ PromptRouter.get("/:id", PromptController.getPromptById);
  *       201:
  *         description: Prompt updated.
  */
-PromptRouter.patch("/", validate(validationSchemas.updatePrompt), PromptController.updatePrompt);
+PromptRouter.route("/").patch(PromptController.updatePrompt);
 
 /**
  * @swagger
@@ -122,7 +120,7 @@ PromptRouter.patch("/", validate(validationSchemas.updatePrompt), PromptControll
  *       201:
  *         description: Prompt created.
  */
-PromptRouter.post("/", validate(validationSchemas.createPrompt), PromptController.createPrompt);
+PromptRouter.route("/").post(PromptController.createPrompt);
 
 /**
  * @swagger
@@ -143,6 +141,6 @@ PromptRouter.post("/", validate(validationSchemas.createPrompt), PromptControlle
  *       204:
  *         description: No content
  */
-PromptRouter.delete("/:id", PromptController.deletePromptById);
+PromptRouter.route("/:id").delete(PromptController.deletePromptById);
 
 export { PromptRouter };

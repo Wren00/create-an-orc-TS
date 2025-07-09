@@ -1,8 +1,8 @@
 import { Router } from "express";
 
 import { UserController } from "../controllers/userController";
-import {validate} from "express-validation";
-import {validationSchemas} from "../utils/validationSchemas";
+import {check} from "express-validator";
+import {validation} from "../utils/validation";
 
 const UserRouter = Router();
 
@@ -97,7 +97,7 @@ UserRouter.route("/").get(UserController.getUserByName);
  *       204:
  *         description: No content
  */
-UserRouter.get("/:id", UserController.getUserById);
+UserRouter.route("/:id").get(UserController.getUserById);
 
 /**
  * @swagger
@@ -135,7 +135,7 @@ UserRouter.get("/:id", UserController.getUserById);
  *       204:
  *         description: No content
  */
-UserRouter.get("/:userId/orcs", UserController.getOrcsByUserId);
+UserRouter.route("/:userId/orcs").get(UserController.getOrcsByUserId);
 
 /**
  * @swagger
@@ -173,7 +173,27 @@ UserRouter.get("/:userId/orcs", UserController.getOrcsByUserId);
  *       204:
  *         description: User Updated
  */
-UserRouter.patch("/", validate(validationSchemas.updateUser), UserController.updateUserDetails);
+UserRouter.route("/")
+    .patch(
+        [    check("userName")
+            .isLength({ min: 3 })
+            .withMessage("the username must have a minimum length of 3")
+            .trim(),
+            check("emailAddress")
+                .isLength({ min: 3 })
+                .withMessage("the email address must have minimum length of 3")
+                .isEmail()
+                .withMessage("the email must be in a valid email format")
+                .trim(),
+            check("userPassword")
+                .isLength({ min: 8, max: 15 })
+                .withMessage("the password should have min and max length between 8-15")
+                .matches(/\d/)
+                .withMessage("the password should have at least one number")
+                .matches(/[!@#$%^&*(),.?":{}|<>]/)
+                .withMessage("the password should have at least one special character"),
+        ],
+        validation.validate, UserController.updateUserDetails);
 
 /**
  * @swagger
@@ -219,7 +239,30 @@ UserRouter.patch("/", validate(validationSchemas.updateUser), UserController.upd
  *       204:
  *         description: User Updated
  */
-UserRouter.patch("/", validate(validationSchemas.updateUserAsAdmin), UserController.updateUserAsAdmin);
+UserRouter.route("/")
+    .patch(
+        [    check("userName")
+                .isLength({ min: 3 })
+                .withMessage("the username must have minimum length of 3")
+                .trim(),
+            check("emailAddress")
+                .isLength({ min: 3 })
+                .withMessage("the email address must have minimum length of 3")
+                .isEmail()
+                .withMessage("the email must be in a valid email format")
+                .trim(),
+            check("userPassword")
+                .isLength({ min: 8, max: 15 })
+                .withMessage("the password should have min and max length between 8-15")
+                .matches(/\d/)
+                .withMessage("the password should have at least one number")
+                .matches(/[!@#$%^&*(),.?":{}|<>]/)
+                .withMessage("the password should have at least one special character"),
+            check("availableTokens")
+                .isNumeric()
+                .withMessage("the value must be a number")
+        ],
+        validation.validate, UserController.updateUserAsAdmin);
 
 /**
  * @swagger
@@ -253,7 +296,27 @@ UserRouter.patch("/", validate(validationSchemas.updateUserAsAdmin), UserControl
  *       201:
  *         description: User registered.
  */
-UserRouter.post("/", validate(validationSchemas.createUser), UserController.createUser);
+UserRouter.route("/")
+    .post(
+        [    check("userName")
+                .isLength({ min: 3 })
+                .withMessage("the username must have minimum length of 3")
+                .trim(),
+            check("emailAddress")
+                .isLength({ min: 3 })
+                .withMessage("the email address must have minimum length of 3")
+                .isEmail()
+                .withMessage("the email must be in a valid email format")
+                .trim(),
+            check("userPassword")
+                .isLength({ min: 8, max: 15 })
+                .withMessage("the password should have min and max length between 8-15")
+                .matches(/\d/)
+                .withMessage("the password should have at least one number")
+                .matches(/[!@#$%^&*(),.?":{}|<>]/)
+                .withMessage("the password should have at least one special character"),
+        ],
+        validation.validate, UserController.createUser);
 
 /**
  * @swagger
@@ -274,7 +337,7 @@ UserRouter.post("/", validate(validationSchemas.createUser), UserController.crea
  *  *       201:
  *  *         description: Character Deleted
  */
-UserRouter.delete("/:id", UserController.deleteUserById);
+UserRouter.route("/:id").delete(UserController.deleteUserById);
 
 
 export { UserRouter };

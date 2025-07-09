@@ -1,7 +1,7 @@
 import express from "express";
 import { OrcController} from "../controllers/orcController";
-import { validate} from "express-validation";
-import {validationSchemas} from "../utils/validationSchemas";
+import { validation } from "../utils/validation"
+import {check} from "express-validator";
 
 const OrcRouter = express.Router();
 
@@ -38,7 +38,7 @@ console.log("orc router mounted");
  *       204:
  *         description: No content
  */
-OrcRouter.get("/", OrcController.getAllOrcs);
+OrcRouter.route("/").get(OrcController.getAllOrcs);
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ OrcRouter.get("/", OrcController.getAllOrcs);
  *       204:
  *         description: No content
  */
-OrcRouter.get("/:id", OrcController.getOrcById);
+OrcRouter.route("/:id").get(OrcController.getOrcById);
 
 /**
  * @swagger
@@ -112,7 +112,15 @@ OrcRouter.get("/:id", OrcController.getOrcById);
  *       201:
  *         description: Orc Created
  */
-OrcRouter.post("/", validate(validationSchemas.createOrc), OrcController.saveOrc);
+OrcRouter.route("/")
+    .post(
+        [   check("name")
+            .isAlphanumeric()
+            .notEmpty(),
+            check("description")
+            .isAlphanumeric()
+            .notEmpty(),
+        ], validation.validate, OrcController.saveOrc);
 
 /**
  * @swagger
@@ -133,6 +141,6 @@ OrcRouter.post("/", validate(validationSchemas.createOrc), OrcController.saveOrc
  *       201:
  *         description: Orc Deleted
  */
-OrcRouter.delete("/:id", OrcController.deleteOrcById);
+OrcRouter.route("/:id").delete(OrcController.deleteOrcById);
 
 export { OrcRouter };
