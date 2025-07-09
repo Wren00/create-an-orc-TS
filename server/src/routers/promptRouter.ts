@@ -1,5 +1,7 @@
 import express from "express";
 import { PromptController} from "../controllers/promptController";
+import {validate} from "express-validation";
+import {validationSchemas} from "../utils/validationSchemas";
 
 const PromptRouter = express.Router();
 
@@ -66,8 +68,35 @@ PromptRouter.get("/", PromptController.getAllPrompts);
 
 PromptRouter.get("/:id", PromptController.getPromptById);
 
-
-PromptRouter.put("/:id", PromptController.updatePrompt);
+/**
+ * @swagger
+ * /prompts:
+ *   put:
+ *     tags: [
+ *       prompts
+ *     ]
+ *     summary: Updates content of a prompt
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               promptId:
+ *                 type: number
+ *                 required: true
+ *                 description: The prompt id to be updated.
+ *               content:
+ *                 type: string
+ *                 required: true
+ *                 description: The content value for the prompt.
+ *     responses:
+ *       400:
+ *         description: Bad Request - required values are missing.
+ *       201:
+ *         description: Prompt updated.
+ */
+PromptRouter.patch("/", validate(validationSchemas.updatePrompt), PromptController.updatePrompt);
 
 /**
  * @swagger
@@ -93,7 +122,7 @@ PromptRouter.put("/:id", PromptController.updatePrompt);
  *       201:
  *         description: Prompt created.
  */
-PromptRouter.post("/", PromptController.createPrompt);
+PromptRouter.post("/", validate(validationSchemas.createPrompt), PromptController.createPrompt);
 
 /**
  * @swagger

@@ -55,7 +55,6 @@ const getOrcsByUserId = async (req: Request, res: Response): Promise<void> => {
 
 const updateUserDetails = async (req: Request, res: Response): Promise<void> => {
     try {
-        console.log("updating user");
         const updateDetails: User = req.body;
         const updatedUser = await UserService.updateUserDetails(updateDetails);
         res.status(200).json(updatedUser);

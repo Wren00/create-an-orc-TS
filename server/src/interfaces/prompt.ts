@@ -3,7 +3,6 @@ interface Prompt {
     content: string;
     createdAt: Date;
     updatedAt: Date;
-    isDeleted: boolean;
 }
 
 interface CreatePrompt {
@@ -12,9 +11,7 @@ interface CreatePrompt {
 
 interface UpdatePrompt {
     promptId: number;
-    content?: string;
-    updatedAt: Date;
-    isDeleted?: boolean;
+    content: string;
 }
 
 

@@ -74,8 +74,8 @@ model OrcImage {
 }
 
 model Prompts {
-  id                                                     Int                 @id(map: "prompts_pk") @default(autoincrement())
-  content                                                String
+  id                                                    Int                @id(map: "prompts_pk") @default(autoincrement())
+  content                                               String
   createdAt                                             DateTime?           @default(now()) @db.Timestamptz(6) @map ("created_at")
   updatedAt                                             DateTime?           @default(now()) @db.Timestamptz(6) @map ("updated_at")
   prompts_collection_prompts_collection_prompt1Toprompts PromptsCollection[] @relation("prompts_collection_prompt1Toprompts")

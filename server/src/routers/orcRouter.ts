@@ -1,5 +1,7 @@
 import express from "express";
 import { OrcController} from "../controllers/orcController";
+import { validate} from "express-validation";
+import {validationSchemas} from "../utils/validationSchemas";
 
 const OrcRouter = express.Router();
 
@@ -110,7 +112,7 @@ OrcRouter.get("/:id", OrcController.getOrcById);
  *       201:
  *         description: Orc Created
  */
-OrcRouter.post("/", OrcController.saveOrc);
+OrcRouter.post("/", validate(validationSchemas.createOrc), OrcController.saveOrc);
 
 /**
  * @swagger

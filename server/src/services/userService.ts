@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {CreateUser, UpdateUserAdminInput, UpdateUserInput, User} from '../interfaces/user';
+import {CreateUser, UpdateUserAdmin, UpdateUser, User} from '../interfaces/user';
 import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
@@ -96,20 +96,18 @@ async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: s
 
 //UPDATE function
 
-async function updateUserDetails(input: UpdateUserInput) {
+async function updateUserDetails(input: UpdateUser) {
     try {
         const dataToUpdate: Record<string, any> = {
             userName: input.userName,
             emailAddress: input.emailAddress,
             userPassword: input.userPassword
         };
-
         if (input.userPassword) {
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(input.userPassword, salt);
             dataToUpdate.userPassword = hashedPassword;
         }
-
         const updatedUser = await prisma.user.update({
             where: { id: input.userId },
             data: removeUndefined(dataToUpdate),
@@ -122,7 +120,7 @@ async function updateUserDetails(input: UpdateUserInput) {
     }
 }
 
-export async function updateUserAsAdmin(input: UpdateUserAdminInput) {
+export async function updateUserAsAdmin(input: UpdateUserAdmin) {
     try {
         const dataToUpdate: Record<string, any> = {
             userName: input.userName,
@@ -130,12 +128,10 @@ export async function updateUserAsAdmin(input: UpdateUserAdminInput) {
             availableTokens: input.availableTokens,
             role: input.role,
         };
-
         if (input.userPassword) {
             const salt = await bcrypt.genSalt();
             dataToUpdate.userPassword = await bcrypt.hash(input.userPassword, salt);
         }
-
         const updatedUser = await prisma.user.update({
             where: { id: input.userId },
             data: removeUndefined(dataToUpdate),
@@ -165,7 +161,6 @@ async function createUser(user: CreateUser) {
                 profileId: profile.id
             }
         });
-
         const createdUser = {
             userName: newUser.userName,
             emailAddress: newUser.emailAddress

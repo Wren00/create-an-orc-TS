@@ -27,11 +27,9 @@ async function getPromptById(promptId: number) {
         const promptObject = await prisma.prompts.findUnique({
             where: { id: promptId },
         });
-        // error check if id could not be found, nothing is returned
         if (!promptObject) {
             throw new Error(`Prompt with ID ${promptId} not found`);
         }
-
         return {
             promptId: promptObject.id.toString(),
             content: promptObject.content
@@ -44,12 +42,15 @@ async function getPromptById(promptId: number) {
 
 // UPDATE function
 
-async function updatePrompt(promptToUpdate: UpdatePrompt) {
+async function updatePrompt(input: UpdatePrompt) {
     try {
+        const dataToUpdate: Record<string, any> = {
+            content: input.content
+        };
 
         return await prisma.prompts.update({
-            where: {id: promptToUpdate.promptId},
-            data: removeUndefined(promptToUpdate)
+            where: {id: input.promptId},
+            data: removeUndefined(dataToUpdate)
         });
     } catch (error) {
         console.error("Error updating prompt:", error);
@@ -62,7 +63,6 @@ async function updatePrompt(promptToUpdate: UpdatePrompt) {
 async function createPrompt(prompt: CreatePrompt) {
 
     try {
-
         return await prisma.prompts.create({
             data: {
                 content: prompt.content

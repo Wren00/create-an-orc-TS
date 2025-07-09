@@ -21,16 +21,16 @@ interface CreateUser {
     userPassword: string;
 }
 
-interface UpdateUserInput {
+interface UpdateUser {
     userId: number;
     userName?: string;
     emailAddress?: string;
     userPassword?: string;
 }
 
-interface UpdateUserAdminInput extends UpdateUserInput {
+interface UpdateUserAdmin extends UpdateUser {
     availableTokens?: number;
     role?: Role;
 }
 
-export { User, CreateUser, UpdateUserInput, UpdateUserAdminInput };
+export { User, CreateUser, UpdateUser, UpdateUserAdmin };

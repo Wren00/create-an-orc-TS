@@ -7,6 +7,7 @@ import {CreateOrc} from "../interfaces/orc";
 
 async function getAllOrcsAdmin(): Promise<{ orcId: number, name: string, orcImagesId: number }[]> {
     try {
+
         const allOrcs = await prisma.orc.findMany({
             select: {
                 id: true,
@@ -34,7 +35,6 @@ async function getOrcById(orcId: number) {
         if (!orcObject) {
             throw new Error(`Orc with ID ${orcId} not found`);
         }
-
         return {
             orcId: orcObject.id,
             name: orcObject.name,
@@ -62,7 +62,6 @@ async function saveOrc(orc: CreateOrc) {
                 userId: orc.userId
             }
         });
-
         const createdOrc : CreateOrc = {
             name: newOrc.name,
             description: newOrc.description,

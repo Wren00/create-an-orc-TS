@@ -1,6 +1,8 @@
 import { Router } from "express";
 
 import { UserController } from "../controllers/userController";
+import {validate} from "express-validation";
+import {validationSchemas} from "../utils/validationSchemas";
 
 const UserRouter = Router();
 
@@ -115,7 +117,8 @@ UserRouter.get("/:userId/orcs", UserController.getOrcsByUserId);
  *         description: User Updated
  */
 
-UserRouter.patch("/", UserController.updateUserDetails);
+UserRouter.patch("/", validate(validationSchemas.updateUser), UserController.updateUserDetails);
+
 
 /**
  * @swagger
@@ -162,7 +165,7 @@ UserRouter.patch("/", UserController.updateUserDetails);
  *         description: User Updated
  */
 
-UserRouter.patch("/", UserController.updateUserAsAdmin);
+UserRouter.patch("/", validate(validationSchemas.updateUserAsAdmin), UserController.updateUserAsAdmin);
 
 /**
  * @swagger
@@ -196,7 +199,7 @@ UserRouter.patch("/", UserController.updateUserAsAdmin);
  *       201:
  *         description: User registered.
  */
-UserRouter.post("/", UserController.createUser);
+UserRouter.post("/", validate(validationSchemas.createUser), UserController.createUser);
 
 /**
  * @swagger
