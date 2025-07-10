@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import { OrcService } from "../services/orcService";
-import { CreateOrc } from "../interfaces/orc";
+import { CreateOrc } from "../../../common/interfaces/orc";
 
 
 //this function needs authentication for client use

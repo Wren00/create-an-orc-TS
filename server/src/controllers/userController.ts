@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import { UserService } from "../services/userService";
-import { User } from "../interfaces/user";
-import { CreateUser } from "../interfaces/user";
+import { User } from "../../../common/interfaces/user";
+import { CreateUser } from "../../../common/interfaces/user";
 
 const getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {

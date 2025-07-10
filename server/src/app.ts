@@ -4,6 +4,7 @@ import { OrcRouter } from "./routers/orcRouter";
 import { PromptRouter } from "./routers/promptRouter";
 import cors from "cors";
 import morgan from "morgan";
+import {GeneratorRouter} from "./routers/generatorRouter";
 
 // initialise app
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", UserRouter);
 app.use("/orcs", OrcRouter);
 app.use("/prompts", PromptRouter);
+app.use("/gen", GeneratorRouter);
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);

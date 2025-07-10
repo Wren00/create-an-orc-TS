@@ -1,5 +1,5 @@
 import {prisma} from "../utils/prisma";
-import {CreateOrc} from "../interfaces/orc";
+import {CreateOrc} from "../../../common/interfaces/orc";
 
 //GET functions
 

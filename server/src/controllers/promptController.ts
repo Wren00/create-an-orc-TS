@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import { PromptService } from "../services/promptService";
-import {CreatePrompt, UpdatePrompt} from "../interfaces/prompt";
+import {CreatePrompt, UpdatePrompt} from "../../../common/interfaces/prompt";
 
 
 //this admin function needs authentication for client use

@@ -1,5 +1,5 @@
 import {prisma} from "../utils/prisma";
-import {CreatePrompt, UpdatePrompt} from "../interfaces/prompt";
+import {CreatePrompt, UpdatePrompt} from "../../../common/interfaces/prompt";
 import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
