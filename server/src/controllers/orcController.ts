@@ -16,7 +16,7 @@ const getAllOrcs = async (req: Request, res: Response): Promise<void> => {
 
 const getOrcById = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { orcId } = req.body;
+        const orcId  = Number(req.params["id"]);
         const orc = await OrcService.getOrcById(orcId)
         res.status(200).json(orc);
     } catch (error) {
