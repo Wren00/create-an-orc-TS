@@ -38,6 +38,12 @@ async function getOrcById(orcId: number) {
         return {
             orcId: orcObject.id,
             name: orcObject.name,
+            str: orcObject.str,
+            dex: orcObject.dex,
+            con: orcObject.con,
+            int: orcObject.int,
+            wis: orcObject.wis,
+            cha: orcObject.cha,
             description: orcObject.description,
             orcImagesId: orcObject.orcImagesId,
             userId: orcObject.userId
@@ -57,6 +63,12 @@ async function saveOrc(orc: CreateOrc) {
             data: {
                 name: orc.name,
                 description: orc.description,
+                str: orc.str,
+                dex: orc.dex,
+                con: orc.con,
+                int: orc.int,
+                wis: orc.wis,
+                cha: orc.cha,
                 orcImagesId: orc.orcImagesId,
                 promptsCollectionId: orc.promptsCollectionId,
                 userId: orc.userId
@@ -65,6 +77,12 @@ async function saveOrc(orc: CreateOrc) {
         const createdOrc : CreateOrc = {
             name: newOrc.name,
             description: newOrc.description,
+            str: newOrc.str,
+            dex: newOrc.dex,
+            con: newOrc.con,
+            int: newOrc.int,
+            wis: newOrc.wis,
+            cha: newOrc.cha,
             orcImagesId: newOrc.orcImagesId,
             promptsCollectionId: newOrc.promptsCollectionId,
             userId: newOrc.userId

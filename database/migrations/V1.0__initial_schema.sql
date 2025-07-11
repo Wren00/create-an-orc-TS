@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS public.prompts
 (
     id serial constraint prompts_pk primary key,
     content text not null,
-    created_At timestamptz default now(),
-    updated_At timestamptz default now()
+    created_at timestamptz default now(),
+    updated_at timestamptz default now()
 );
 
 CREATE TABLE IF NOT EXISTS public.prompts_collection
@@ -79,6 +79,12 @@ CREATE TABLE IF NOT EXISTS public.orcs
     id serial constraint orcs_pk primary key,
     name text not null,
     description text not null,
+    str int not null,
+    dex int not null,
+    con int not null,
+    int int not null,
+    wis int not null,
+    cha int not null,
     prompts_collection_id serial constraint prompts_collection_id_fk references public.prompts_collection(id),
     orc_images_id serial constraint orc_images_id_fk references orc_images (id),
     user_id serial constraint user_id_fk references users(id),

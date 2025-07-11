@@ -22,8 +22,8 @@ model User {
   availableTokens Int         @default(5) @map("available_tokens")
   role            Role        @default(USER) @map("role")
   profileId       Int         @default(autoincrement()) @map("profile_id")
-  createdAt      DateTime?   @default(now()) @db.Timestamptz(6) @map ("created_at")
-  updatedAt      DateTime?   @default(now()) @db.Timestamptz(6) @map ("updated_at")
+  createdAt       DateTime?   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime?   @default(now()) @map("updated_at") @db.Timestamptz(6)
   orcs            Orc[]       @relation("UserOrcs")
   profile         UserProfile @relation(fields: [profileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_profile_fk")
 
@@ -31,31 +31,31 @@ model User {
 }
 
 model OrcHead {
-  id         Int        @id(map: "orc_head_images_pk") @default(autoincrement())
-  url        String
-  createdAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("created_at")
-  updatedAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("updated_at")
-  orcImages  OrcImage[]
+  id        Int        @id(map: "orc_head_images_pk") @default(autoincrement())
+  url       String
+  createdAt DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime?  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  orcImages OrcImage[]
 
   @@map("orc_head")
 }
 
 model OrcTorso {
-  id         Int        @id(map: "orc_torso_images_pk") @default(autoincrement())
-  url        String
-  createdAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("created_at")
-  updatedAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("updated_at")
-  orcImages  OrcImage[]
+  id        Int        @id(map: "orc_torso_images_pk") @default(autoincrement())
+  url       String
+  createdAt DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime?  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  orcImages OrcImage[]
 
   @@map("orc_torso")
 }
 
 model OrcLegs {
-  id         Int        @id(map: "orc_legs_images_pk") @default(autoincrement())
-  url        String
-  createdAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("created_at")
-  updatedAt DateTime?  @default(now()) @db.Timestamptz(6) @map ("updated_at")
-  orcImages  OrcImage[]
+  id        Int        @id(map: "orc_legs_images_pk") @default(autoincrement())
+  url       String
+  createdAt DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime?  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  orcImages OrcImage[]
 
   @@map("orc_legs")
 }
@@ -74,10 +74,10 @@ model OrcImage {
 }
 
 model Prompts {
-  id                                                    Int                @id(map: "prompts_pk") @default(autoincrement())
-  content                                               String
-  createdAt                                             DateTime?           @default(now()) @db.Timestamptz(6) @map ("created_at")
-  updatedAt                                             DateTime?           @default(now()) @db.Timestamptz(6) @map ("updated_at")
+  id                                                     Int                 @id(map: "prompts_pk") @default(autoincrement())
+  content                                                String
+  createdAt                                              DateTime?           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                                              DateTime?           @default(now()) @map("updated_at") @db.Timestamptz(6)
   prompts_collection_prompts_collection_prompt1Toprompts PromptsCollection[] @relation("prompts_collection_prompt1Toprompts")
   prompts_collection_prompts_collection_prompt2Toprompts PromptsCollection[] @relation("prompts_collection_prompt2Toprompts")
   prompts_collection_prompts_collection_prompt3Toprompts PromptsCollection[] @relation("prompts_collection_prompt3Toprompts")
@@ -100,12 +100,18 @@ model PromptsCollection {
 
 model Orc {
   id                  Int               @id(map: "orcs_pk") @default(autoincrement())
-  name                String
-  description         String
+  name                String            @map("name")
+  description         String            @map("description")
+  str                 Int               @map("str")
+  dex                 Int               @map("dex")
+  con                 Int               @map("con")
+  int                 Int               @map("int")
+  wis                 Int               @map("wis")
+  cha                 Int               @map("cha")
   promptsCollectionId Int               @default(autoincrement()) @map("prompts_collection_id")
   orcImagesId         Int               @default(autoincrement()) @map("orc_images_id")
   userId              Int               @default(autoincrement()) @map("user_id")
-  createdAt          DateTime?          @default(now()) @db.Timestamptz(6) @map ("created_at")
+  createdAt           DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
   orcImages           OrcImage          @relation(fields: [orcImagesId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orc_images_id_fk")
   promptsCollection   PromptsCollection @relation(fields: [promptsCollectionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "prompts_collection_id_fk")
   user                User              @relation("UserOrcs", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_id_fk")
@@ -114,10 +120,10 @@ model Orc {
 }
 
 model Catalogue {
-  id         Int       @id(map: "catalogue_pk") @default(autoincrement())
-  syllables  String
-  createdAt DateTime? @default(now()) @db.Timestamptz(6) @map ("created_at")
-  updatedAt DateTime? @default(now()) @db.Timestamptz(6) @map ("updated_at")
+  id        Int       @id(map: "catalogue_pk") @default(autoincrement())
+  syllables String
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   @@map("catalogue")
 }
@@ -141,8 +147,8 @@ model background_images {
   id         Int       @id(map: "background_images_pk") @default(autoincrement())
   image_name String
   url        String
-  createdAt DateTime? @default(now()) @db.Timestamptz(6) @map ("created_at")
-  updatedAt DateTime? @default(now()) @db.Timestamptz(6) @map ("updated_at")
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
 }
 
 enum Role {

@@ -28,7 +28,8 @@ console.log("generator router mounted");
  *       204:
  *         description: No content
  */
-GeneratorRouter.route("/").get(GeneratorController.generateOrcName);
+GeneratorRouter.route("/").get(GeneratorController.generateOrc);
+
 
 
 export { GeneratorRouter };

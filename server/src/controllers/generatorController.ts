@@ -2,19 +2,19 @@ import {Request, Response} from "express";
 import {GeneratorService} from "../generators/generatorService";
 
 
-//pass syllables from the catalogue in the database
-const generateOrcName = async (req: Request, res: Response): Promise<void> => {
+//return generated data for an Orc
+const generateOrc = async (req: Request, res: Response): Promise<void> => {
     try {
-        const name = await GeneratorService.generateOrcName();
-        res.status(200).json(name);
+        const orc = await GeneratorService.generateOrcName();
+        res.status(200).json(orc);
     } catch (error) {
-        console.error("Error creating Orc name: ", error);
-        res.status(500).json({ message: "Could not generate Orc name."});
+        console.error("Error creating Orc: ", error);
+        res.status(500).json({ message: "Could not generate Orc."});
     }
 }
 
 const GeneratorController = {
-    generateOrcName
+    generateOrc
 };
 
 

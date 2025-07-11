@@ -19,8 +19,12 @@ async function generateOrcName() {
             }
         }
 
+    console.log(syllables);
     return syllables.join('');
 }
+
+
+
 
 const GeneratorService = {
     generateOrcName
