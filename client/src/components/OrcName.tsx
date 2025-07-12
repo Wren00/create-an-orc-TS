@@ -1,32 +1,42 @@
 import { useEffect, useState } from "react";
 import ApiClient from "../utils";
 
-export const GenerateName = () => {
+export const DisplayOrcName = () => {
 
-    // returns a name for the Orc
+    // displays the generated name for the Orc
+    const name = useFetchOrcName()
 
-    const [name, setName] = useState<string>("Loading...");
+    //use a ternary operator to decide whether name exists (not null)
+    // charAt(0) → get the first character
+    // .toUpperCase() → make it uppercase
+    // slice(1) → get the rest of the string
+    // fallback string if name does not exist
+
+    return (<div>
+        <p>{name ? name.charAt(0).toUpperCase() + name.slice(1) : "Loading..."}</p>
+    </div>)
+}
+
+// custom hook for getting the name!
+
+export function useFetchOrcName(): string | null {
+    const [name, setName] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchName = async () => {
             try {
-                const { data } = await ApiClient.get("/gen");
-
-                const rawName : string = typeof data === "string" ? data : data.name;
-
-                const formatted = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-
-                setName(formatted);
-            } catch (error) {
-                console.error("Failed to fetch name:", error);
+                const { data } = await ApiClient.get('/gen');
+                const rawName = typeof data === 'string' ? data : data.name;
+                const cleaned = String(rawName);
+                setName(cleaned);
+                console.log(name);
+            } catch {
                 setName("???");
             }
         };
 
-        fetchData();
+        fetchName();
     }, []);
 
-    return (<div>
-        <p className="orc-name">{name}</p>
-    </div>)
+    return name;
 }

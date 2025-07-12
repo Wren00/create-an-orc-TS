@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import ApiClient from "../utils";
 import {OrcStats} from "../../../common/interfaces/orc";
 
@@ -6,6 +6,7 @@ export const GenerateStats = () => {
     const [stats, setStats] = useState<OrcStats | null>(null);
 
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 const { data } = await ApiClient.get("/orcs/1");
