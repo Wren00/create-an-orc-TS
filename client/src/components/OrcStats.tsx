@@ -10,15 +10,16 @@ export const GenerateStats = () => {
         const fetchData = async () => {
             try {
                 const { data } = await ApiClient.get("/orcs/1");
-                console.log("Fetched orc stats:", data);
-                setStats({
+
+                const orcStats : OrcStats = {
                     str: data.str,
                     dex: data.dex,
                     con: data.con,
                     int: data.int,
                     wis: data.wis,
                     cha: data.cha,
-                });
+                }
+                setStats((prev) => (prev !== orcStats ? orcStats : prev));
             } catch (error) {
                 console.error("Failed to fetch stats:", error);
             }

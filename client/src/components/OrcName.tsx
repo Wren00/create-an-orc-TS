@@ -29,7 +29,6 @@ export function useFetchOrcName(): string | null {
                 const rawName = typeof data === 'string' ? data : data.name;
                 const cleaned = String(rawName);
                 setName(cleaned);
-                console.log(name);
             } catch {
                 setName("???");
             }

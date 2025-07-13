@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import ApiClient from "../utils";
 
 export const GenerateDescription = () => {
-
-    // returns a description for the Orc. Currently extracting test string from database but to be AI generated
-
     const [desc, setDesc] = useState<string>("");
 
     useEffect(() => {
@@ -12,20 +9,26 @@ export const GenerateDescription = () => {
             try {
                 const { data } = await ApiClient.get("/orcs/1");
 
-                setDesc(typeof data === "string" ? data : data.description);
+                const newDesc =
+                    typeof data === "string"
+                        ? data
+                        : typeof data?.description === "string"
+                            ? data.description
+                            : "???";
 
+                setDesc((prev) => (prev !== newDesc ? newDesc : prev));
             } catch (error) {
                 console.error("Failed to fetch description:", error);
                 setDesc("???");
-                console.log("orc description is" + desc)
-
             }
         };
 
         fetchData();
     }, []);
 
-    return (<div>
-        <p className="orc-description">{desc}</p>
-    </div>)
+    return (
+        <div>
+            <p className="orc-description">{desc}</p>
+        </div>
+    );
 }

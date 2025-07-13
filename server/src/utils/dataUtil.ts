@@ -4,4 +4,13 @@ function removeUndefined<T extends object>(obj: T): Partial<T> {
     ) as Partial<T>;
 }
 
-export { removeUndefined };
+function generateRestrainedRandomNum(rowCount: number) : number {
+
+    if (rowCount === 0) {
+        throw new Error('Table is empty — cannot generate a row count.');
+    }
+
+    return Math.floor(Math.random() * rowCount);
+}
+
+export { removeUndefined, generateRestrainedRandomNum };
