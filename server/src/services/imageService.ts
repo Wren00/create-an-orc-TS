@@ -16,8 +16,6 @@ async function getOrcHead(): Promise<string> {
         skip: randomOffset,
     });
 
-    console.log("getOrcHead: result =", headImageUrl);
-
     if (!headImageUrl || typeof headImageUrl.url !== "string") {
         throw new Error("Torso image URL is invalid or missing.");
     }
@@ -41,8 +39,6 @@ async function getOrcTorso(): Promise<string> {
         skip: randomOffset,
     });
 
-    console.log("🔍 getOrcTorso: result =", torsoImageUrl);
-
     if (!torsoImageUrl || typeof torsoImageUrl.url !== "string") {
         throw new Error("Torso image URL is invalid or missing.");
     }
@@ -65,8 +61,6 @@ async function getOrcLegs(): Promise<string> {
     const legImageUrl = await prisma.orcLegs.findFirst({
         skip: randomOffset,
     });
-
-    console.log("🔍 getOrcTorso: result =", legImageUrl);
 
     if (!legImageUrl || typeof legImageUrl.url !== "string") {
         throw new Error("Leg image URL is invalid or missing.");
