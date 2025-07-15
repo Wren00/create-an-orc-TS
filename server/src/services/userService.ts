@@ -30,7 +30,6 @@ async function getUserById(userId: number) {
         const userObject = await prisma.user.findUnique({
             where: { id: userId },
         });
-        // error check if id could not be found, nothing is returned
         if (!userObject) {
             throw new Error(`User with ID ${userId} not found`);
         }

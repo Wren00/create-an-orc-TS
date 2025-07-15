@@ -1,7 +1,7 @@
 import express from "express";
-import { UserRouter } from "./routers/userRouter";
-import { OrcRouter } from "./routers/orcRouter";
-import { PromptRouter } from "./routers/promptRouter";
+import {UserRouter} from "./routers/userRouter";
+import {OrcRouter} from "./routers/orcRouter";
+import {PromptRouter} from "./routers/promptRouter";
 import {GeneratorRouter} from "./routers/generatorRouter";
 import {ImageRouter} from "./routers/imageRouter";
 import {TestRouter} from "./routers/testRouter";
