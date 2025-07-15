@@ -2,7 +2,7 @@
 import {Role} from "@prisma/client";
 
 
-interface User {
+export interface User {
     userId: number;
     userName: string;
     emailAddress: string;
@@ -14,22 +14,27 @@ interface User {
     updatedAt: Date;
 }
 
-interface CreateUser {
+export interface PublicUser {
+    userId: number;
+    userName: string;
+    emailAddress: string;
+    role: Role;
+}
+
+export interface CreateUser {
     userName: string;
     emailAddress: string;
     userPassword: string;
 }
 
-interface UpdateUser {
+export interface UpdateUser {
     userId: number;
     userName?: string;
     emailAddress?: string;
     userPassword?: string;
 }
 
-interface UpdateUserAdmin extends UpdateUser {
+export interface UpdateUserAdmin extends UpdateUser {
     availableTokens?: number;
     role?: Role;
 }
-
-export { User, CreateUser, UpdateUser, UpdateUserAdmin };

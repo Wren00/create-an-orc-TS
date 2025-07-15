@@ -40,17 +40,22 @@ UserRouter.route("/").get(UserController.getAllUsers);
 
 /**
  * @swagger
- * /users:
+ * /users/name:
  *   get:
  *     tags: [
  *       users
  *     ]
- *     summary: Returns a user searched by their userName
- *         parameters:
- *       - name: userName
- *         in: path
- *         type: string
- *         description: All users with userNames matching the requested value
+ *     summary: Returns a user or array of users searched by their userName
+ *         requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userName:
+ *                  type: string
+ *                  required: true
+ *                  description: the users namr
  *     responses:
  *       200:
  *         description: OK
@@ -66,7 +71,7 @@ UserRouter.route("/").get(UserController.getAllUsers);
  *       204:
  *         description: No content
  */
-UserRouter.route("/").get(UserController.getUserByName);
+UserRouter.route("/name").get(UserController.getUserByName);
 
 /**
  * @swagger

@@ -1,4 +1,4 @@
-interface Orc {
+export interface Orc {
     orcId: number;
     name: string;
     description: string;
@@ -13,7 +13,7 @@ interface Orc {
     userId: number;
 }
 
-interface CreateOrc {
+export interface CreateOrc {
     name: string;
     description: string;
     str: number;
@@ -27,7 +27,7 @@ interface CreateOrc {
     userId: number;
 }
 
-interface OrcStats {
+export interface OrcStats {
     str: number;
     dex: number;
     con: number;
@@ -35,5 +35,3 @@ interface OrcStats {
     wis: number;
     cha: number;
 }
-
-export { Orc, CreateOrc, OrcStats};

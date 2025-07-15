@@ -1,18 +1,15 @@
-interface Prompt {
+export interface Prompt {
     promptId: number;
     content: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
-interface CreatePrompt {
+export interface CreatePrompt {
     content: string;
 }
 
-interface UpdatePrompt {
+export interface UpdatePrompt {
     promptId: number;
     content: string;
 }
-
-
-export { Prompt, CreatePrompt, UpdatePrompt };

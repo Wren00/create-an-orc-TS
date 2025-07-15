@@ -1,24 +1,32 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {CreateUser, UpdateUser, UpdateUserAdmin, User} from '../../../common/interfaces/user';
+import {CreateUser, PublicUser, UpdateUser, UpdateUserAdmin, User} from '../../../common/interfaces/user';
 import {removeUndefined} from "../utils/dataUtil";
 
 //GET functions
 
-async function getAllUsers(): Promise<{ userId: string; userName: string; emailAddress: string}[]> {
+async function getAllUsers(): Promise<PublicUser[]> {
     try {
         const allUsers = await prisma.user.findMany({
             select: {
                 id: true,
                 userName: true,
-                emailAddress: true
-            }
+                emailAddress: true,
+                availableTokens: true,
+                role: true,
+                profileId: true,
+                createdAt: true,
+                updatedAt: true,
+            },
         });
-        return  allUsers.map((user: { id: { toString: () => any; }; userName: any; emailAddress: any; }): { userId: string; userName: string; emailAddress: string; } => ({
-            userId: user.id.toString(),
+        const publicUsers: PublicUser[] = allUsers.map(user => ({
+            userId: user.id, // 🔁 rename here
             userName: user.userName,
-            emailAddress: user.emailAddress
+            emailAddress: user.emailAddress,
+            role: user.role
         }));
+
+        return publicUsers;
     } catch (error) {
         console.error("Unable to fetch users.", error);
         throw error;
@@ -35,7 +43,7 @@ async function getUserById(userId: number) {
         }
 
         return {
-            userId: userObject.id.toString(),
+            userId: userObject.id,
             userName: userObject.userName,
             emailAddress: userObject.emailAddress,
             role: userObject.role
@@ -46,24 +54,41 @@ async function getUserById(userId: number) {
     }
 }
 
-async function getUserByName(nameSearch: string): Promise<User[]> {
-    let userArray = [];
+async function getUserByName(nameSearch: string): Promise<PublicUser[]> {
+    let searchArray= [];
 
     try {
-        userArray = await prisma.user.findMany({
+        searchArray = await prisma.user.findMany({
             where: {
                 userName: {
                     contains: nameSearch,
                     mode: "insensitive",
                 },
             },
+            select: {
+                id: true,
+                userName: true,
+                emailAddress: true,
+                availableTokens: true,
+                role: true,
+                profileId: true,
+                createdAt: true,
+                updatedAt: true,
+            },
         });
+
+        const publicUserSearch: PublicUser[] = searchArray.map(user => ({
+            userId: user.id, // 🔁 rename here
+            userName: user.userName,
+            emailAddress: user.emailAddress,
+            role: user.role
+        }));
+
+        return publicUserSearch;
     } catch (error) {
         console.error("Error fetching user by name: ", error);
         throw error;
     }
-
-    return userArray.map(mapToUser);
 }
 
 async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: string; orcImagesId: number }[]> {
@@ -116,7 +141,7 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
             userName: input.userName,
             emailAddress: input.emailAddress,
             availableTokens: input.availableTokens,
-            role: input.role,
+            role: input.role
         };
         if (input.userPassword) {
             const salt = await bcrypt.genSalt();
@@ -180,19 +205,6 @@ async function deleteUserById(userId: number) {
     }
 }
 
-function mapToUser( user: { id: any; userName: any; emailAddress: any; userPassword: any; availableTokens: any; role: any; profileId: any; createdAt: any; updatedAt: any; } ): User {
-    return {
-        userId: user.id,
-        userName: user.userName,
-        emailAddress: user.emailAddress,
-        userPassword: user.userPassword,
-        availableTokens: user.availableTokens,
-        role: user.role,
-        profileId: user.profileId,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-    };
-}
 
 const UserService = {
     getAllUsers,
