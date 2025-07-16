@@ -111,7 +111,7 @@ async function updateUserDetails(input: UpdateUser) {
             data: removeUndefined(dataToUpdate),
         });
 
-        return updatedUser;
+        return "User has been successfully updated: " + updatedUser.userName;
     } catch (error) {
         console.error("Error updating user: ", error);
         throw error;
@@ -130,12 +130,13 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
             const salt = await bcrypt.genSalt();
             dataToUpdate.userPassword = await bcrypt.hash(input.userPassword, salt);
         }
-        await prisma.user.update({
-            where: {id: input.userId},
+        console.log("🧪 final update data:", removeUndefined(dataToUpdate));
+        const updatedUser = await prisma.user.update({
+            where: { id: input.userId },
             data: removeUndefined(dataToUpdate),
         });
 
-        return "User has been successfully updated: " + dataToUpdate.toString();
+        return "User has been successfully updated: " + updatedUser.userName;
 
     } catch (error) {
         console.error("Error updating user: ", error);
@@ -145,17 +146,17 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
 
 //CREATE function
 
-async function createUser(user: CreateUser): Promise<String> {
+async function createUser(input: CreateUser): Promise<String> {
     try {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(user.userPassword, salt);
+        const hashedPassword = await bcrypt.hash(input.userPassword, salt);
 
         const profile = await prisma.userProfile.create({ data: {} });
 
         const newUser : CreateUser = await prisma.user.create({
             data: {
-                userName: user.userName,
-                emailAddress: user.emailAddress,
+                userName: input.userName,
+                emailAddress: input.emailAddress,
                 userPassword: hashedPassword,
                 profileId: profile.id
             }
@@ -182,7 +183,7 @@ async function deleteUserById(userId: number) {
                 id: userId,
             },
         });
-        return deletedUser;
+        return "User successfully deleted: " + deletedUser.userName;
     } catch (error) {
         throw Error("Error deleting user account.");
     }

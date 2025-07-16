@@ -1,6 +1,6 @@
-import { Router } from "express";
+import {Router} from "express";
 
-import { UserController } from "../controllers/userController";
+import {UserController} from "../controllers/userController";
 import {check} from "express-validator";
 import {validation} from "../utils/validation";
 
@@ -96,8 +96,7 @@ UserRouter.route("/name").get(UserController.getUserByName);
  *                 summary: An example JSON response
  *                 value: '{ "id": 1,
  *                           "userName": "testUser",
- *                           "emailAddress": "email@example.com",
- *                           "role": "USER"
+ *                           "emailAddress": "email@example.com"
  *                          }'
  *       204:
  *         description: No content
@@ -185,20 +184,50 @@ UserRouter.route("/")
             .withMessage("the username must have a minimum length of 3")
             .trim(),
             check("emailAddress")
+                .optional({nullable: true})
                 .isLength({ min: 3 })
                 .withMessage("the email address must have minimum length of 3")
                 .isEmail()
                 .withMessage("the email must be in a valid email format")
                 .trim(),
             check("userPassword")
+                .optional({nullable: true})
                 .isLength({ min: 8, max: 15 })
                 .withMessage("the password should have min and max length between 8-15")
                 .matches(/\d/)
                 .withMessage("the password should have at least one number")
                 .matches(/[!@#$%^&*(),.?":{}|<>]/)
-                .withMessage("the password should have at least one special character"),
+                .withMessage("the password should have at least one special character")
         ],
         validation.validate, UserController.updateUserDetails);
+
+UserRouter.route("/")
+    .patch(
+        [    check("userName")
+            .isLength({ min: 3 })
+            .withMessage("the username must have a minimum length of 3")
+            .trim(),
+            check("emailAddress")
+                .isLength({ min: 3 })
+                .optional({nullable: true})
+                .withMessage("the email address must have minimum length of 3")
+                .isEmail()
+                .withMessage("the email must be in a valid email format")
+                .trim(),
+            check("userPassword")
+                .isLength({ min: 8, max: 15 })
+                .optional({nullable: true})
+                .withMessage("the password should have min and max length between 8-15")
+                .matches(/\d/)
+                .withMessage("the password should have at least one number")
+                .matches(/[!@#$%^&*(),.?":{}|<>]/)
+                .withMessage("the password should have at least one special character"),
+            check("availableTokens")
+                .optional({nullable: true})
+                .isInt({min:0, max:50})
+                .withMessage("Tokens must be an integer between 0-100"),
+        ],
+        validation.validate, UserController.updateUserAsAdmin);
 
 /**
  * @swagger

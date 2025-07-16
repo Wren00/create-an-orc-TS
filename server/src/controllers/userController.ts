@@ -64,7 +64,7 @@ const updateUserDetails = async (req: Request, res: Response): Promise<void> => 
 const updateUserAsAdmin = async (req: Request, res: Response): Promise<void> => {
     try {
         const updateDetailsAdmin: User = req.body;
-        const updatedUser = await UserService.updateUserDetails(updateDetailsAdmin);
+        const updatedUser = await UserService.updateUserAsAdmin(updateDetailsAdmin);
         res.status(200).json(updatedUser);
     } catch (error) {
         console.error("Error updating user: ", error);
@@ -87,11 +87,11 @@ const createUser = async (req: Request, res: Response): Promise<void> => {
 
 //DELETE functions
 
-const deleteUserById = async (req: Request, res: Response): Promise<void> => {
+const deleteUserById = async (req: Request, res: Response) => {
     try {
         const userId = Number(req.params["id"]);
-        const deletedUser = await UserService.deleteUserById(userId);
-        res.status(200).json(deletedUser);
+        const deletedUserMessage : string = await UserService.deleteUserById(userId);
+        res.status(200).json(deletedUserMessage);
     } catch (error) {
         console.error("Error deleting user account: ");
         res.status(500).json({ message: "Could not delete user.", error});
