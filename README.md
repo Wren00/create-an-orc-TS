@@ -1,18 +1,18 @@
 # Create An Orc project
 
 This website provides a randomised name, stats, an description built from a prompt and a visual
-picture of your character made from randomised pieces of pixel character art. This fantasy character will be an `orc`
+picture of your character made from randomised pieces of pixel character art. This fantasy character will be an `orc` 
 which will be communicated in the branding of the site.
 The generation of a short description of the character will be done through prompts to OpenAI.
-The randomised character will be regenerated on a page refresh. This is to quickly give a user
+The randomised character will be regenerated on a page refresh. This is to quickly give a user 
 seeking an idea for art or writing a compelling starting off point.
 
 ## Problem Definition
 Creating a new character for a series or for a TTRPG can sometimes be a daunting process if people are
-experiencing a creative block.
+experiencing a creative block. 
 This project intends to provide a compelling starting off point to encourage user ideas and creativity.
 The design will focus on accessibility and speed to get creatives thinking with minimal effort, but will be
-able to eventually include some more incentives for repeat users like saving and sharing their
+able to eventually include some more incentives for repeat users like saving and sharing their 
 favourite random prompts.
 
 ## Who is it for?
@@ -23,27 +23,27 @@ prompt to form an idea for a fantasy character. In this case, characters are als
 
 ### Must have
 - A pixel art image of the randomised orc. This has been created through:
-    - A shadow base
-    - A face with skin colour
-    - Upper torso clothes
-    - Lower torso clothes
+  - A shadow base 
+  - A face with skin colour 
+  - Upper torso clothes 
+  - Lower torso clothes 
 - These individual images are layered together on the screen and will appear in the same place on page refresh
 - A randomised name which has been built out of syllables provided in a JSON file.
 - A randomised description created via prompts to Open AI. The prompts should have randomised values each time it is sent
-  through to the AI. The AI generates the description which will be sent back and displayed.
+through to the AI. The AI generates the description which will be sent back and displayed.
 - Randomised Stats for the character.
 ### Should have
-- User accounts where a user can save instances of characters that they wish to keep record of.
-- Rate limiting to prevent an overload of AI requests.
-- The website should be viewable and usable on different screen sizes.
+- User accounts where a user can save instances of characters that they wish to keep record of. 
+- Rate limiting to prevent an overload of AI requests. 
+- The website should be viewable and usable on different screen sizes. 
 ### Could have
 - Eventually expand to other kinds of fantasy characters, like elves, dwarves etc. Each new type of potential character
-  will need to be added as separate updates.
-- Users can share their favourite creations with other users.
+will need to be added as separate updates. 
+- Users can share their favourite creations with other users. 
 ### Won't have
-- A full gameified character sheet for ttrpg players as this would be too complex.
+- A full gameified character sheet for ttrpg players as this would be too complex. 
 - A massively expanded description of the orc as this is just meant to be a simple prompt to inspire user
-  creativity.
+creativity. 
 
 ## Domain Model Diagram
 ```mermaid
@@ -57,10 +57,10 @@ PROMPTS ||--|{ ORCS : creates
 - **User**: Any person accessing the website and viewing a randomised character
 - **Orc**: The user generated character that are returned via the randomiser code and the AI. Initially this is just for Orcs as a race.
 - **Prompt**: Randomised adjectives that will be provided in threes to the AI to generate a
-  character. For example an orc may be:
-    - Adventurous
-    - Poor
-    - Good
+character. For example an orc may be:
+  - Adventurous
+  - Poor
+  - Good
 - **Catalogue**: Syllables stored within the databases used for the purpose of orc name generation and supplementing prompts with Retrieval Augemented Generation (RAG).
 
 ---
@@ -76,14 +76,16 @@ USERS {
 	user_password string
 	available_tokens int
 	role Role
-	profile_id 
-}
-USER_PROFILE {
-    id int PK
+	profile_id int
+	created_at Date
+	updated_at Date
+	
 }
 PROMPTS {
  	id int PK
-	adjectives text
+	content string
+    	created_at Date
+    	updated_at Date
 }
 PROMPTS_COLLECTION {
 	id int PK
@@ -94,9 +96,17 @@ PROMPTS_COLLECTION {
 ORCS {
  	id int PK
 	name string
+    	description text
+    	str int
+    	dex int
+    	con int
+    	int int
+    	wis int
+    	cha int
+    	prompts_collection_id int FK
 	orc_images_id int FK
-	prompts_collection_id int FK
-	user_id int FK
+    	user_id int FK
+    	created_at Date
 }
 ORC_IMAGES {
 	id int PK
@@ -106,39 +116,34 @@ ORC_IMAGES {
 }
 ORC_HEAD {
 	id int
-	url text 
+	url string
 }
 ORC_TORSO {
 	id int
-	url text 
+	url string
 }
 ORC_LEGS {
 	id int
-	url text 
+	url string
 }
 BACKGROUND_IMAGES {
  	id int PK
 	image_name string
 	url string
 }
-ORC_CATALOGUE {
-	id int PK
-	orc_id int FK
-	catalogue_id int FK
-}
 CATALOGUE {
     id int PK
     syllables string
+    created_at Date
+    updated_at Date
 }
 	USERS ||--|{ PROMPTS_COLLECTION : creates
 	USERS ||--|{ ORCS : owns
-	USERS ||--|| USER PROFILE : owns
 	ORCS ||--|{ PROMPTS_COLLECTION : uses
 	ORCS ||--|| CHARACTER_IMAGES : has
 	ORCS ||--|| CATALOGUE : uses
 	ORC_IMAGES ||--|{ CHARACTER_BODY_PART_IMAGES : uses
 	ORC_BODY_PART_IMAGES }|--|{ CHARACTER_BODY_PART_IMAGE_TYPES : uses
-	ORC_CATALOGUE ||--|{ CHARACTERS : generates
 	PROMPTS_COLLECTION ||--|{ PROMPTS : uses
 	
 ```
@@ -194,12 +199,42 @@ Response Example
 }
 ```
 
+### GET /users/{id}
+
+Description: Get a single user or an array of users matching the value in the request
+
+Request Example:
+```
+{
+  "user_name": "test"
+}
+```
+Response codes:
+
+200 OK\
+404 Not Found
+
+Response Example
+```
+[
+  {
+    "id": 1,
+    "user_name": "testadmin",
+    "email_address": "adminaccount@example.com",
+  },
+  {
+    "id": 2,
+    "user_name": "testuser",
+    "email_address": "testaccount@example.com",
+  }
+]
+```
 ---
 ## Users POST requests
 
 ### POST /users
 
-Description: Register an account for a new user.
+Description: Register an account for a new user and returns a confirmation message on success.
 
 Request Example:
 ```
@@ -207,7 +242,6 @@ Request Example:
   "user_name": "newUser",
   "email_address": "new_user@example.com,
   "user_password": "encryptedPassword",
-  "admin_privileges": 0
 }
 ```
 
@@ -219,27 +253,19 @@ Response codes:
 
 Response Example:
 ```
-{
-  "id": 3,
-  "user_name": "newUser",
-  "email_address": "new_user@example.com",
-  "admin_privileges": 0,
-  "profile_id": 3
-}
+"User successfully registered: " + {userName}
 ```
-
 ---
 ## Users PUT requests
 
 ### PUT users/{id}
 
-Description: Update a single user account.
+Description: Update a single user account and returns a confirmation message on success.
 
 Request Example:
 ```
 {
-  "user_name": "new_user",
-  "admin_privileges": 0
+  "user_name": "update_user",
 }
 ```
 
@@ -249,14 +275,9 @@ Response codes:
 201 Created\
 400 Bad Request
 
+Response example:
 ```
-Response Example:
-
-{
-  "id": 3,
-  "user_name": "updated_new_user",
-  "email_address": "updated_email@example.com",
-}
+"User successfully updated: " + {userName}
 ```
 
 ---
@@ -264,15 +285,12 @@ Response Example:
 
 ### DELETE users/{id}
 
-Description: Delete a single user account.
+Description: Delete a single user account by id and return confirmation message on success.
 
 Request Example:
 ```
 {
-  "user_name": "deletedUser",
-  "email_address": "deleted_user@example.com,
-  "user_password": "encryptedPassword",
-  "admin_privileges": 0
+  "id" : 1
 }
 ```
 
@@ -280,6 +298,12 @@ Response codes:
 
 204 Resource deleted successfully\
 404 Not found
+
+Response example:
+
+```
+"User successfully deleted: " + {deletedUserName}
+```
 
 ---
 
@@ -379,7 +403,7 @@ Response Example
 ---
 ## Orcs POST requests
 
-### POST /users/{user_id}/orcs
+### POST /orcs
 
 Description: Saves a new Orc for a user.
 
@@ -420,7 +444,7 @@ Once new objects are posted into the Orcs database they shouldn't be updated or 
 
 ## Orcs DELETE requests
 
-### DELETE /orcs/{orc_id}
+### DELETE /{id}
 
 Description: Delete a saved Orc from a user collection.
 
@@ -458,11 +482,11 @@ Response Example
 [
   {
     "id": 1,
-    "adjectives: "good"
+    "content": "good"
   },
   {
     "id": 2,
-    "adjectives" : "evil"
+    "content": "evil"
   }
 ]
 ```
@@ -480,7 +504,7 @@ Response Example
 ```
   {
     "id": 3,
-    "adjectives: "neutral"
+    "content": "neutral"
   }
 ```
 ---
@@ -493,7 +517,7 @@ Description: Submit a new prompt to the database.
 Request Example:
 ```
 {
-  "adjectives" : "happy"
+  "content": "happy"
 }
 ```
 
@@ -502,10 +526,10 @@ OR
 ```
 [
   {
-    "adjectives": "sad"
+    "content": "sad"
   },
   {
-    "adjectives": "angry"
+    "content": "angry"
   }
 ]
 ```
@@ -527,7 +551,7 @@ Request Example:
 ```
 {
   "id": 5,
-  "adjectives": "prompt_to_update"
+  "content": "prompt_to_update"
 }
 ```
 
@@ -542,7 +566,7 @@ Response Example:
 
 {
   "id": 5",
-  "adjectives" : "prompt_to_update"
+  "content" : "prompt_to_update"
 }
 ```
 
@@ -557,7 +581,7 @@ Request Example:
 ```
 {
   "id": "6",
-  "adjectives" : "delete_this_prompt"
+  "content" : "delete_this_prompt"
 }
 ```
 
