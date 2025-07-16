@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {CreateUser, PublicUser, UpdateUser, UpdateUserAdmin, User} from '../../../common/interfaces/user';
+import {CreateUser, PublicUser, UpdateUser, UpdateUserAdmin} from '../../../common/interfaces/user';
 import {removeUndefined} from "../utils/dataUtil";
+import {User} from "@prisma/client";
 
 //GET functions
 
@@ -11,22 +12,16 @@ async function getAllUsers(): Promise<PublicUser[]> {
             select: {
                 id: true,
                 userName: true,
-                emailAddress: true,
-                availableTokens: true,
-                role: true,
-                profileId: true,
-                createdAt: true,
-                updatedAt: true,
+                emailAddress: true
             },
         });
-        const publicUsers: PublicUser[] = allUsers.map(user => ({
+        const publicUserSearch: PublicUser[] = allUsers.map(user => ({
             userId: user.id, // 🔁 rename here
             userName: user.userName,
-            emailAddress: user.emailAddress,
-            role: user.role
+            emailAddress: user.emailAddress
         }));
 
-        return publicUsers;
+        return publicUserSearch;
     } catch (error) {
         console.error("Unable to fetch users.", error);
         throw error;
@@ -41,13 +36,7 @@ async function getUserById(userId: number) {
         if (!userObject) {
             throw new Error(`User with ID ${userId} not found`);
         }
-
-        return {
-            userId: userObject.id,
-            userName: userObject.userName,
-            emailAddress: userObject.emailAddress,
-            role: userObject.role
-        };
+        return mapUserToPublicUser(userObject);
     } catch (error) {
         console.error("Failed to fetch user:", error);
         throw error;
@@ -68,20 +57,14 @@ async function getUserByName(nameSearch: string): Promise<PublicUser[]> {
             select: {
                 id: true,
                 userName: true,
-                emailAddress: true,
-                availableTokens: true,
-                role: true,
-                profileId: true,
-                createdAt: true,
-                updatedAt: true,
+                emailAddress: true
             },
         });
 
         const publicUserSearch: PublicUser[] = searchArray.map(user => ({
             userId: user.id, // 🔁 rename here
             userName: user.userName,
-            emailAddress: user.emailAddress,
-            role: user.role
+            emailAddress: user.emailAddress
         }));
 
         return publicUserSearch;
@@ -203,6 +186,14 @@ async function deleteUserById(userId: number) {
     } catch (error) {
         throw Error("Error deleting user account.");
     }
+}
+
+function mapUserToPublicUser (user: User) : PublicUser {
+    return {
+        userId: user.id,
+        userName: user.userName,
+        emailAddress: user.emailAddress,
+    };
 }
 
 

@@ -18,7 +18,6 @@ export interface PublicUser {
     userId: number;
     userName: string;
     emailAddress: string;
-    role: Role;
 }
 
 export interface CreateUser {

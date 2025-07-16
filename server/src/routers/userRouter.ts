@@ -55,7 +55,7 @@ UserRouter.route("/").get(UserController.getAllUsers);
  *               userName:
  *                  type: string
  *                  required: true
- *                  description: the users namr
+ *                  description: the users name that contain or match the request
  *     responses:
  *       200:
  *         description: OK
