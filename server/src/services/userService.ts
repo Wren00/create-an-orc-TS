@@ -74,15 +74,20 @@ async function getUserByName(nameSearch: string): Promise<PublicUser[]> {
     }
 }
 
-async function getOrcsByUserId(userId: number): Promise<{ orcId: number; name: string; orcImagesId: number }[]> {
+async function getOrcsByUserId(id: number): Promise<{ name: string; str: number; dex: number; con: number; int: number; wis: number; cha: number; orcImagesId: number;  }[]> {
     try {
         const orcsByUser = await prisma.orc.findMany({
-            where: { userId: userId },
+            where: { userId: id },
         });
-        return  orcsByUser.map((orc: { id: any; name: any; description: any; orcImagesId: any; }): { orcId: number; name: string, description: string, orcImagesId: number } => ({
-            orcId: orc.id,
+        return  orcsByUser.map((orc: { name: any; description: any; str: any; dex: any; con: any; int: any; wis: any; cha: any; orcImagesId: any; }): { name: string, description: string, str: number, dex: number, con: number, int: number, wis: number, cha: number, orcImagesId: number } => ({
             name: orc.name,
             description: orc.description,
+            str: orc.str,
+            dex: orc.dex,
+            con: orc.con,
+            int: orc.int,
+            wis: orc.wis,
+            cha: orc.cha,
             orcImagesId: orc.orcImagesId
         }));
     } catch (error) {
@@ -130,7 +135,6 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
             const salt = await bcrypt.genSalt();
             dataToUpdate.userPassword = await bcrypt.hash(input.userPassword, salt);
         }
-        console.log("🧪 final update data:", removeUndefined(dataToUpdate));
         const updatedUser = await prisma.user.update({
             where: { id: input.userId },
             data: removeUndefined(dataToUpdate),

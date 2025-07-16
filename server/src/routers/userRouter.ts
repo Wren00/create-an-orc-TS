@@ -112,7 +112,7 @@ UserRouter.route("/:id").get(UserController.getUserById);
  *     ]
  *     summary: Returns an array of orcs linked by a userId
  *         parameters:
- *       - name: userId
+ *       - name: id
  *         in: path
  *         type: integer
  *         description: The userId that links a returned gallery of orcs.
@@ -139,7 +139,7 @@ UserRouter.route("/:id").get(UserController.getUserById);
  *       204:
  *         description: No content
  */
-UserRouter.route("/:userId/orcs").get(UserController.getOrcsByUserId);
+UserRouter.route("/:id/orcs").get(UserController.getOrcsByUserId);
 
 /**
  * @swagger
@@ -273,19 +273,21 @@ UserRouter.route("/")
  *       204:
  *         description: User Updated
  */
-UserRouter.route("/")
+UserRouter.route("/admin")
     .patch(
         [    check("userName")
                 .isLength({ min: 3 })
                 .withMessage("the username must have minimum length of 3")
                 .trim(),
             check("emailAddress")
+                .optional({nullable: true})
                 .isLength({ min: 3 })
                 .withMessage("the email address must have minimum length of 3")
                 .isEmail()
                 .withMessage("the email must be in a valid email format")
                 .trim(),
             check("userPassword")
+                .optional({nullable: true})
                 .isLength({ min: 8, max: 15 })
                 .withMessage("the password should have min and max length between 8-15")
                 .matches(/\d/)
@@ -293,8 +295,11 @@ UserRouter.route("/")
                 .matches(/[!@#$%^&*(),.?":{}|<>]/)
                 .withMessage("the password should have at least one special character"),
             check("availableTokens")
+                .optional({nullable: true})
                 .isNumeric()
-                .withMessage("the value must be a number")
+                .withMessage("the value must be a number"),
+            check("role")
+                .optional({nullable: true})
         ],
         validation.validate, UserController.updateUserAsAdmin);
 

@@ -94,6 +94,30 @@ OrcRouter.route("/:id").get(OrcController.getOrcById);
  *                 type: string
  *                 required: true
  *                 description: The AI generated description for the Orc.
+ *               str:
+ *                  type: integer
+ *                  required: true
+ *                  description: The randomised STR value.
+ *               dex:
+ *                  type: integer
+ *                  required: true
+ *                  description: The randomised DEX value.
+ *               con:
+ *                  type: integer
+ *                  required: true
+ *                  description: The randomised CON value.
+ *               int:
+ *                  type: integer
+ *                  required: true
+ *                  description: The randomised INT value.
+ *               wis:
+ *                  type: integer
+ *                  required: true
+ *                  description: The randomised WIS value.
+ *               cha:
+ *                  type: integer
+ *                  required: true
+ *                  description: The randomised CHA value.
  *               promptsCollectionId:
  *                 type: integer
  *                 required: true
@@ -112,15 +136,37 @@ OrcRouter.route("/:id").get(OrcController.getOrcById);
  *       201:
  *         description: Orc Created
  */
-OrcRouter.route("/")
+OrcRouter.route(("/"))
     .post(
         [   check("name")
-            .isAlphanumeric()
-            .notEmpty(),
+                .isAlphanumeric()
+                .notEmpty(),
             check("description")
-            .isAlphanumeric()
-            .notEmpty(),
-        ], validation.validate, OrcController.saveOrc);
+                .isString()
+                .notEmpty(),
+            check("str")
+                .isNumeric(),
+            check("dex")
+                .isNumeric(),
+            check("con")
+                .isNumeric(),
+            check("int")
+                .isNumeric(),
+            check("wis")
+                .isNumeric(),
+            check("cha")
+                .isNumeric(),
+            check("orcImagesId")
+                .notEmpty()
+                .isNumeric(),
+            check("promptsCollectionId")
+                .notEmpty()
+                .isNumeric(),
+            check("userId")
+                .notEmpty()
+                .isNumeric(),
+        ], validation.validate,
+        OrcController.saveOrc);
 
 /**
  * @swagger

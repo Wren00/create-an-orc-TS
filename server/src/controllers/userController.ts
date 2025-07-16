@@ -37,7 +37,7 @@ const getUserById = async (req: Request, res: Response): Promise<void> => {
 
 const getOrcsByUserId = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = Number(req.params["user_id"]);
+        const userId = Number(req.params["id"]);
         const orcs = await UserService.getOrcsByUserId(userId);
         res.status(200).json(orcs);
     } catch (error) {
