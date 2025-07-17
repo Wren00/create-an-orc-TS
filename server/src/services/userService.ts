@@ -74,12 +74,12 @@ async function getUserByName(nameSearch: string): Promise<PublicUser[]> {
     }
 }
 
-async function getOrcsByUserId(id: number): Promise<{ name: string; str: number; dex: number; con: number; int: number; wis: number; cha: number; orcImagesId: number;  }[]> {
+async function getOrcsByUserId(id: number): Promise<{ name: string; str: number; dex: number; con: number; int: number; wis: number; cha: number; orcImagesId: number; userId: number;  }[]> {
     try {
         const orcsByUser = await prisma.orc.findMany({
             where: { userId: id },
         });
-        return  orcsByUser.map((orc: { name: any; description: any; str: any; dex: any; con: any; int: any; wis: any; cha: any; orcImagesId: any; }): { name: string, description: string, str: number, dex: number, con: number, int: number, wis: number, cha: number, orcImagesId: number } => ({
+        return  orcsByUser.map((orc: { name: any; description: any; str: any; dex: any; con: any; int: any; wis: any; cha: any; orcImagesId: any; userId: any; }): { name: string, description: string, str: number, dex: number, con: number, int: number, wis: number, cha: number, orcImagesId: number, userId: number } => ({
             name: orc.name,
             description: orc.description,
             str: orc.str,
@@ -88,7 +88,8 @@ async function getOrcsByUserId(id: number): Promise<{ name: string; str: number;
             int: orc.int,
             wis: orc.wis,
             cha: orc.cha,
-            orcImagesId: orc.orcImagesId
+            orcImagesId: orc.orcImagesId,
+            userId: orc.userId
         }));
     } catch (error) {
         console.error("Unable to fetch orcs by user id.", error);

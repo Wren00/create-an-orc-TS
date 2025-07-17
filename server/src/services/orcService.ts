@@ -92,7 +92,7 @@ async function saveOrc(orc: CreateOrc) {
         };
         return createdOrc;
     } catch (error: any) {
-        console.error("🔥 Prisma create error:", error);
+        console.error("Prisma error on creating Orc:", error);
         throw new Error("Failed to create Orc");
     }
 }
@@ -108,7 +108,8 @@ async function deleteOrcById(orcId: number) {
             },
         });
     } catch (error) {
-        console.log(error);
+        console.error("Prisma error on deleting Orc:", error);
+        throw new Error("Failed to delete Orc");
     }
     return deletedOrc;
 }

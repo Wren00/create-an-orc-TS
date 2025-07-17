@@ -21,6 +21,9 @@ jest.mock("../src/utils/prisma", () => ({
         userProfile: {
             create: jest.fn(),
         },
+        orc: {
+            findMany: jest.fn(),
+        },
     },
 }));
 
@@ -32,6 +35,11 @@ jest.mock("bcrypt", () => ({
 (prisma.user.findMany as unknown as jest.Mock).mockResolvedValue([
     { id: 1, userName:  "testmock1", emailAddress: "email@example.com"},
     { id: 2, userName:  "testmock2", emailAddress: "email2@example.com"}
+]);
+
+(prisma.orc.findMany as unknown as jest.Mock).mockResolvedValue([
+    { id: 1, name: "Huk", str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, description: "A test Orc.", orcImagesId: 1, userId: 1 },
+    { id: 2, name: "Hek", str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, description: "Second test Orc.", orcImagesId: 1, userId: 1 }
 ]);
 
 (prisma.user.findUnique as unknown as jest.Mock).mockResolvedValue(
@@ -72,6 +80,19 @@ describe("UserService.getUserByName", () => {
         expect(result).toEqual([
             { userId: 1, userName:  "testmock1", emailAddress: "email@example.com" },
             { userId: 2, userName:  "testmock2", emailAddress: "email2@example.com"}
+        ]);
+    });
+});
+
+// get OrcsByUserId returns an array of Orcs belonging to a user
+
+describe("UserService.getOrcsByUserId", () => {
+    it("returns an array of Orcs retrieved by user id", async () => {
+        const result = await UserService.getOrcsByUserId(1);
+        // searching for "test"
+        expect(result).toEqual([
+            { name: "Huk", str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, description: "A test Orc.", orcImagesId: 1, userId: 1 },
+            { name: "Hek", str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, description: "Second test Orc.", orcImagesId: 1, userId: 1 }
         ]);
     });
 });
