@@ -23,7 +23,7 @@ async function getAllUsers(): Promise<PublicUser[]> {
 
         return publicUserSearch;
     } catch (error) {
-        console.error("Unable to fetch users.", error);
+        console.error("Unable to fetch users: ", error);
         throw error;
     }
 }
@@ -38,7 +38,7 @@ async function getUserById(userId: number) {
         }
         return mapUserToPublicUser(userObject);
     } catch (error) {
-        console.error("Failed to fetch user:", error);
+        console.error("Failed to fetch User: ", error);
         throw error;
     }
 }
@@ -92,7 +92,7 @@ async function getOrcsByUserId(id: number): Promise<{ name: string; str: number;
             userId: orc.userId
         }));
     } catch (error) {
-        console.error("Unable to fetch orcs by user id.", error);
+        console.error("Unable to fetch orc gallery: ", error);
         throw error;
     }
 }
@@ -117,10 +117,10 @@ async function updateUserDetails(input: UpdateUser) {
             data: removeUndefined(dataToUpdate),
         });
 
-        return "User has been successfully updated: " + updatedUser.userName;
+        return `User has been successfully updated: ${updatedUser.userName}`
     } catch (error) {
-        console.error("Error updating user: ", error);
-        throw error;
+        console.error("Prisma error on updating user:", error);
+        throw new Error("Failed to update user");
     }
 }
 
@@ -141,11 +141,11 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
             data: removeUndefined(dataToUpdate),
         });
 
-        return "User has been successfully updated: " + updatedUser.userName;
+        return `User has been successfully updated: ${updatedUser.userName}`;
 
     } catch (error) {
-        console.error("Error updating user: ", error);
-        throw error;
+        console.error("Prisma error on updating user:", error);
+        throw new Error("Failed to update user");
     }
 }
 
@@ -170,9 +170,10 @@ async function createUser(input: CreateUser): Promise<String> {
             userName: newUser.userName,
             emailAddress: newUser.emailAddress
         };
-        return "User successfully registered: " + createdUser.userName;
+        return `User successfully registered: ${createdUser.userName}`;
     } catch(error) {
-        throw Error("Error creating user.");
+        console.error("Prisma error on creating user:", error);
+        throw new Error("Failed to create user.");
     }
 }
 
@@ -188,9 +189,10 @@ async function deleteUserById(userId: number) {
                 id: userId,
             },
         });
-        return "User successfully deleted: " + deletedUser.userName;
+        return `User successfully deleted: ${deletedUser.userName}`
     } catch (error) {
-        throw Error("Error deleting user account.");
+        console.error("Prisma error on deleting user:", error);
+        throw new Error("Failed to delete user.");
     }
 }
 

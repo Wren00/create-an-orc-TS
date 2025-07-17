@@ -143,7 +143,7 @@ describe("UserService.createUser", () => {
             userName: "fail",
             emailAddress: "fail@example.com",
             userPassword: "failpass",
-        })).rejects.toThrow("Error creating user.");
+        })).rejects.toThrow("Failed to create user.");
     });
 });
 
@@ -171,7 +171,7 @@ describe("UserService.deleteUserById", () => {
     it("should throw an error if deletion fails", async () => {
         (prisma.user.delete as jest.Mock).mockRejectedValue(new Error("DB error"));
 
-        await expect(UserService.deleteUserById(999)).rejects.toThrow("Error deleting user account.");
+        await expect(UserService.deleteUserById(999)).rejects.toThrow("Failed to delete user.");
     });
 });
 

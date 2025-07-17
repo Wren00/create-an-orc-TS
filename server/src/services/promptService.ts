@@ -69,7 +69,8 @@ async function createPrompt(prompt: CreatePrompt) {
             }
         });
     } catch(error) {
-        throw Error("Cannot create prompt.");
+        console.error("Prisma error on creating Prompt:", error);
+        throw new Error("Failed to create Prompt");
     }
 }
 
@@ -81,8 +82,8 @@ export async function deletePromptById(promptId: number) {
             where: {id: promptId}
         });
     } catch (error) {
-        console.error("Error removing prompt: ", error);
-        throw error;
+        console.error("Prisma error on deleting Prompt:", error);
+        throw new Error("Failed to delete Prompt");
     }
 }
 

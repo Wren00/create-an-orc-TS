@@ -111,9 +111,9 @@ describe("createPrompt", () => {
     });
 
     it("should throw if creation fails", async () => {
-        (prisma.prompts.create as jest.Mock).mockRejectedValue(new Error("Cannot create promnpt,"));
+        (prisma.prompts.create as jest.Mock).mockRejectedValue(new Error("Failed to create Prompt"));
 
-        await expect(PromptService.createPrompt({ content: "Oops" })).rejects.toThrow("Cannot create prompt.");
+        await expect(PromptService.createPrompt({ content: "Oops" })).rejects.toThrow("Failed to create Prompt");
     });
 });
 
@@ -128,8 +128,8 @@ describe("deletePromptById", () => {
     });
 
     it("should throw if deletion fails", async () => {
-        (prisma.prompts.delete as jest.Mock).mockRejectedValue(new Error("Error removing prompt:"));
+        (prisma.prompts.delete as jest.Mock).mockRejectedValue(new Error("Failed to delete Prompt"));
 
-        await expect(PromptService.deletePromptById(1)).rejects.toThrow("Error removing prompt:");
+        await expect(PromptService.deletePromptById(1)).rejects.toThrow("Failed to delete Prompt");
     });
 })
