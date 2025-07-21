@@ -50,7 +50,11 @@ async function generateOrcDescription() {
 
     const promptContent : string[] = await PromptService.getSelectedPromptContent(promptCollectionId);
 
-    const promptText = `Can you generate a short background for an fantasy orc character: they are- ${promptContent.join(`,`)} their name is not important.`;
+    const promptText = `Can you generate a short background for an fantasy Orc character: they are- ${promptContent.join(`,`)} 
+    Other requests - 
+    - their name is not important
+    - if mentioning the word orc, it should always be Orc.`;
+
 
     console.log(promptText);
 
