@@ -1,4 +1,8 @@
 import {prisma} from "../utils/prisma";
+import OpenAI from "openai";
+import {PromptService} from "../services/promptService";
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
 
 async function generateOrcName() {
 
@@ -35,12 +39,39 @@ async function generateOrcName() {
 
 }
 
+// generating Orc description with OpenAI
 
+// new collection of 3 prompts needs to be generated
+// prompt collection id needs to be used to access prompt1, prompt2, prompt 3
+
+async function generateOrcDescription() {
+
+    const promptCollectionId : number = await PromptService.createNewPromptsCollection();
+
+    const promptContent : string[] = await PromptService.getSelectedPromptContent(promptCollectionId);
+
+    const promptText = `Can you generate a short background for an fantasy orc character: they are- ${promptContent.join(`,`)} their name is not important.`;
+
+    console.log(promptText);
+
+    const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+            { role: "system", content: "You are a fantasy character description generator." },
+            { role: "user", content: promptText }
+        ],
+    });
+
+    const result = response.choices[0].message.content;
+    console.log(result);
+    return result;
+}
 
 
 
 const GeneratorService = {
-    generateOrcName
+    generateOrcName,
+    generateOrcDescription
 };
 
 export { GeneratorService };

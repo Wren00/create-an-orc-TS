@@ -21,15 +21,33 @@ console.log("generator router mounted");
  *             examples:
  *               jsonObject:
  *                 summary: An example JSON response
- *                 value: '[{ "id": 1,
- *                            "name": "Huk",
- *                           {"id": 2,
- *                            "name": "Mekor"}]'
+ *                 value: '{"name": "Huk"}'
  *       204:
  *         description: No content
  */
-GeneratorRouter.route("/").get(GeneratorController.generateOrc);
+GeneratorRouter.route("/name").get(GeneratorController.generateName);
 
+/**
+ * @swagger
+ * /gen:
+ *   get:
+ *     tags: [
+ *       generators
+ *     ]
+ *     summary: Returns a description generated from OpenAI by prompts from the database
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             examples:
+ *               jsonObject:
+ *                 summary: An example JSON response
+ *                 value: '{"description": "This testing Orc is good, friendly and fun"}'
+ *       204:
+ *         description: No content
+ */
+GeneratorRouter.route("/story").get(GeneratorController.generateDescription);
 
 
 export { GeneratorRouter };

@@ -2,24 +2,24 @@ import { useEffect, useState } from "react";
 import ApiClient from "../utils";
 
 export const GenerateDescription = () => {
-    const [desc, setDesc] = useState<string>("");
+    const [story, setStory] = useState<string>("");
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await ApiClient.get("/orcs/1");
+                const { data } = await ApiClient.get("/gen/story");
 
-                const newDesc =
+                const newStory =
                     typeof data === "string"
                         ? data
                         : typeof data?.description === "string"
                             ? data.description
                             : "???";
 
-                setDesc((prev) => (prev !== newDesc ? newDesc : prev));
+                setStory((prev) => (prev !== newStory ? newStory : prev));
             } catch (error) {
-                console.error("Failed to fetch description:", error);
-                setDesc("???");
+                console.error("Failed to fetch story:", error);
+                setStory("???");
             }
         };
 
@@ -28,7 +28,7 @@ export const GenerateDescription = () => {
 
     return (
         <div>
-            <p className="orc-description">{desc}</p>
+            <p className="orc-description">{story}</p>
         </div>
     );
 }

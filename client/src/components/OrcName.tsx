@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ApiClient from "../utils";
 
-export const DisplayOrcName = () => {
+export const GenerateOrcName = () => {
 
     // displays the generated name for the Orc
     const name = useFetchOrcName()
@@ -25,7 +25,7 @@ export function useFetchOrcName(): string | null {
     useEffect(() => {
         const fetchName = async () => {
             try {
-                const { data } = await ApiClient.get('/gen');
+                const { data } = await ApiClient.get('/gen/name');
                 const rawName = typeof data === 'string' ? data : data.name;
                 const cleaned = String(rawName);
                 setName(cleaned);

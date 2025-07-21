@@ -15,13 +15,11 @@ async function getAllUsers(): Promise<PublicUser[]> {
                 emailAddress: true
             },
         });
-        const publicUserSearch: PublicUser[] = allUsers.map(user => ({
-            userId: user.id, // 🔁 rename here
+        return allUsers.map<PublicUser>(user => ({
+            userId: user.id,
             userName: user.userName,
             emailAddress: user.emailAddress
         }));
-
-        return publicUserSearch;
     } catch (error) {
         console.error("Unable to fetch users: ", error);
         throw error;
@@ -61,13 +59,12 @@ async function getUserByName(nameSearch: string): Promise<PublicUser[]> {
             },
         });
 
-        const publicUserSearch: PublicUser[] = searchArray.map(user => ({
-            userId: user.id, // 🔁 rename here
+        return searchArray.map<PublicUser>(user => ({
+            userId: user.id,
             userName: user.userName,
             emailAddress: user.emailAddress
         }));
 
-        return publicUserSearch;
     } catch (error) {
         console.error("Error fetching user by name: ", error);
         throw error;
