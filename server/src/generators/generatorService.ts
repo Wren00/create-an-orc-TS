@@ -1,10 +1,11 @@
 import {prisma} from "../utils/prisma";
 import OpenAI from "openai";
 import {PromptService} from "../services/promptService";
+import {OrcNameStory} from "../../../common/interfaces/orc";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 
-async function generateOrcName() {
+async function generateOrcData() {
 
     //random number for number of syllables in name between 1 - 3
     const randomNum: number = Math.floor(Math.random() * 3) + 1;
@@ -32,50 +33,60 @@ async function generateOrcName() {
 
     //if name length is less than 3 chars add "k" to the end, this is for aesthetic
     if (name.length < 3) {
-        return (`${name}k`);
-    } else {
-        return name;
+        name += "k"
+        console.log(name)
     }
-
-}
-
-// generating Orc description with OpenAI
-
-// new collection of 3 prompts needs to be generated
-// prompt collection id needs to be used to access prompt1, prompt2, prompt 3
-
-async function generateOrcDescription() {
 
     const promptCollectionId : number = await PromptService.createNewPromptsCollection();
 
     const promptContent : string[] = await PromptService.getSelectedPromptContent(promptCollectionId);
 
-    const promptText = `Can you generate a short background for an fantasy Orc character: they are- ${promptContent.join(`,`)} 
-    Other requests - 
-    - their name is not important
-    - if mentioning the word orc, it should always be Orc.`;
+    const promptText = `
+    You are a fantasy writer tasked with creating short backstories for Orc characters based on three personality traits.
 
+    Here are some examples:
+
+    Traits: fierce, loyal, cunning  
+    Backstory: This Orc has survived countless battles through sharp wits and brute force. Though fierce in combat, their loyalty to their clan has earned deep respect. Cunning and resourceful, they often lead raids with careful planning. Their fearlessness and willingness to take risks have led them on countless daring escapades, making them a legend among their kin.
+    Traits: brave, wise, solitary  
+    Backstory: Raised in the windswept highlands of Mak'Dur, this Orc has trained alone seeking enlightenment for decades. Their wisdom is sought by many, but few are brave enough to approach. With a rugged appearance and scars that tell tales of countless battles won, this Orc is constantly on guard, anticipating any potential threats. 
+    Traits: chaotic, generous, beautiful
+    Backstory: This Orc is a chaotic being, known for their unpredictable nature and spontaneous actions. Despite their fierce appearance, they possess a heart of generosity, always willing to help those in need, even if it goes against the typical Orc mentality. Their beauty is unconventional, with sharp features and a wild, untamed aura that sets them apart from others in their tribe.
+    
+    Now, generate a background for this Orc:
+
+    Traits: ${promptContent.join(", ")}  
+    Name: ${name}
+    Backstory:
+    `;
 
     console.log(promptText);
 
     const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
-            { role: "system", content: "You are a fantasy character description generator." },
-            { role: "user", content: promptText }
+            {
+                role: "system",
+                content: "You are a fantasy character description generator. Given a list of personality traits, generate a short background for an Orc character. Keep it rich and concise (4–5 sentences). If describing a place, create a thematic name. Make sure the name value for the Orc has a capital letter."
+            },
+            {
+                role: "user",
+                content: promptText
+            }
         ],
     });
 
-    const result = response.choices[0].message.content;
-    console.log(result);
-    return result;
+    const story = response.choices[0].message.content ?? "Unable to generate a backstory for this Orc.";
+
+    const orcData : OrcNameStory = {
+        name : name,
+        description : story
+    }
+    return orcData
 }
 
-
-
 const GeneratorService = {
-    generateOrcName,
-    generateOrcDescription
+    generateOrcData
 };
 
 export { GeneratorService };
