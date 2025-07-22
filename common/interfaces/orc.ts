@@ -27,12 +27,9 @@ export interface CreateOrc {
     userId: number;
 }
 
-export interface OrcNameStory {
+export interface GenerateOrc {
     name: string;
     description: string;
-}
-
-export interface OrcStats {
     str: number;
     dex: number;
     con: number;
