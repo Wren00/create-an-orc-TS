@@ -1,52 +1,20 @@
-import { useEffect, useState } from "react";
-import ApiClient from "../utils";
-
+import { useFetchData } from "../hooks/useFetchData";
 
 export const DisplayOrcImages = () => {
+    const { data, loading, error } = useFetchData<{ images: string[] }>("/images");
+
+    if (loading) return <p>Loading images...</p>;
+    if (error || !data || !Array.isArray(data.images)) return <p>Error loading images</p>;
+
+    const [head, torso, legs] = data.images;
+
+    return (
+        <div>
+            <img src={head} alt="head" />
+            <img src={torso} alt="torso" />
+            <img src={legs} alt="legs" />
+        </div>
+    );
+};
 
 
-    const images : string[] = useFetchImages();
-
-    return (<div>
-        <p><img src= {images.at(0)?.toString()} alt="head"/></p>
-        <p><img src= {images.at(1)?.toString()} alt="torso" /></p>
-        <p><img src= {images.at(2)?.toString()} alt="legs" /></p>
-    </div>)
-}
-
-// custom hook for getting the images
-
-export function useFetchImages(): string[] {
-    const [images, setImages] = useState<string[] | null>(null);
-
-    useEffect(() => {
-        const fetchImages = async () => {
-            try {
-                const response = await ApiClient.get("/images");
-                const imageData = response.data;
-
-                if (
-                    /// check imageData is an Array
-                    Array.isArray(imageData.images) &&
-                    imageData.images.every((img :string) => true)
-                ) {
-                    setImages(imageData.images);
-                } else {
-                    console.error("Unexpected image format:", imageData);
-                    setImages(["???"]);
-                }
-            } catch (err) {
-                console.error("Failed to fetch images:", err);
-                setImages(["???"]);
-            }
-        };
-
-        fetchImages();
-    }, []);
-
-    if(images !== null) {
-        return images;
-    } else {
-        return (["???"]);
-    }
-}

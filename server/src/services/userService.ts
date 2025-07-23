@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
 import {CreateUser, PublicUser, UpdateUser, UpdateUserAdmin} from '../../../common/interfaces/user';
-import {removeUndefined} from "../utils/dataUtil";
+import {removeUndefined} from "../../../common/utils/dataUtil";
 import {User} from "@prisma/client";
 
 //GET functions
