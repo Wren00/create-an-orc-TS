@@ -46,8 +46,32 @@ async function getOrcImageArray(): Promise<string[]> {
     return [headUrl, torsoUrl, legsUrl];
 }
 
+// retrieve all urls from background_images table
+
+async function getBgImagesFromTable(
+    model: { findMany: (args?: { select?: { url: boolean } }) => Promise<any[]> },
+    label: string
+): Promise<string[]> {
+    const results = await model.findMany({
+        select: {
+            url: true
+        }
+    });
+
+    const urls = results
+        .map(item => item.url)
+        .filter((url: any): url is string => typeof url === "string");
+
+    if (urls.length === 0) {
+        throw new Error(`No valid ${label} image URLs found.`);
+    }
+
+    return urls;
+}
+
 const ImageService = {
     getOrcImageArray,
+    getBgImagesFromTable
 };
 
 export { ImageService };

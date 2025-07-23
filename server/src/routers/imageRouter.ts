@@ -29,7 +29,32 @@ console.log("image router mounted");
  *       204:
  *         description: No content
  */
-ImageRouter.route("/").get(ImageController.getImages);
+ImageRouter.route("/").get(ImageController.getOrcImages);
 
+/**
+ * @swagger
+ * /images/bg:
+ *   get:
+ *     tags: [
+ *       images
+ *     ]
+ *     summary: Returns all urls from a table in the database
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             examples:
+ *               jsonObject:
+ *                 summary: An example JSON response
+ *                 value: '[{ "id": 1,
+ *                            "url": "s3://s3-url/create-an-orc/background.png"},
+ *                            {"id": 2,
+ *                            "url": "s3://s3-url/create-an-orc/orc-shadow.png"}
+ *                            }]'
+ *       204:
+ *         description: No content
+ */
+ImageRouter.route("/bg").get(ImageController.getBgImages);
 
 export { ImageRouter};
