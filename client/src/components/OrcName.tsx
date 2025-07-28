@@ -6,7 +6,7 @@ export const  OrcName  = () => {
     if (loading) return <p>Loading name...</p>;
     if (!orcData) return <p>No Orc data.</p>;
 
-    const orcName =  orcData.name.charAt(0).toUpperCase() + orcData.name.slice(1);
+    const orcName =  orcData.name
 
     return <div className="orc-name">
         {orcName}

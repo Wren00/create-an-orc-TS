@@ -34,8 +34,11 @@ async function generateOrcData() {
     //if name length is less than 3 chars add "k" to the end, this is for aesthetic
     if (name.length < 3) {
         name += "k"
-        console.log(name)
     }
+
+    let formatName = name.charAt(0).toUpperCase() + name.slice(1);
+
+    console.log(formatName)
 
     const promptCollectionId : number = await PromptService.createNewPromptsCollection();
 
@@ -54,9 +57,9 @@ async function generateOrcData() {
     Backstory: This Orc is a chaotic being, known for their unpredictable nature and spontaneous actions. Despite their fierce appearance, they possess a heart of generosity, always willing to help those in need, even if it goes against the typical Orc mentality. Their beauty is unconventional, with sharp features and a wild, untamed aura that sets them apart from others in their tribe.
     
     Now, write a short backstory for an Orc with the following traits: ${promptContent.join(", ")}. 
-    Their name is ${name}.`;
+    Their name is ${formatName}.`;
 
-    console.log(promptText);
+    console.log(promptContent);
 
     const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -84,7 +87,7 @@ async function generateOrcData() {
     }
 
     const orcData : GenerateOrc = {
-        name : name,
+        name : formatName,
         description : story,
         str : stats[0],
         dex : stats[1],
