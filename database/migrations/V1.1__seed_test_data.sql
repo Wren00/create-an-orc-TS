@@ -43,7 +43,8 @@ INSERT INTO prompts (content) VALUES
              ('good'), ('evil'), ('lawful'), ('chaotic'), ('mean'),
              ('adventurous'), ('shy'), ('kind'), ('generous'), ('angry'),
              ('cruel'), ('cautious'), ('clever'), ('selfish'), ('sneaky'),
-             ('reliable'), ('ugly'), ('honest'), ('weak'), ('lazy'), ('beautiful');
+             ('reliable'), ('ugly'), ('honest'), ('weak'), ('lazy'), ('beautiful'),
+             ('naturalistic'), ('grateful'), ('stoic'), ('bashful'), ('energetic');
 
 INSERT INTO prompts_collection (prompt1, prompt2, prompt3) VALUES
              (1, 2, 3), (4, 5, 6), (7, 8, 1);

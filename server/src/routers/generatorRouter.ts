@@ -21,9 +21,16 @@ console.log("generator router mounted");
  *             examples:
  *               jsonObject:
  *                 summary: An example JSON response
- *                 value: '{"name": "gak",
- *                          "description": "Gak, a seasoned Orc warrior, earned a reputation for being cautious yet relentless in battle."
- *                          }'
+ *                 value: '{
+ *                          "name": "Testing Orc",
+ *                          "description": "This is an AI generated description of the Orc's backstory.",
+ *                          "str": 10,
+ *                          "dex": 11,
+ *                          "con": 12,
+ *                          "int": 13,
+ *                          "wis": 14,
+ *                          "cha": 15
+ *                         }'
  *       204:
  *         description: No content
  */

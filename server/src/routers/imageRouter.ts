@@ -21,11 +21,11 @@ console.log("image router mounted");
  *             examples:
  *               jsonObject:
  *                 summary: An example JSON response
- *                 value: '[{ "id": 1,
+ *                 value: '{ "id": 1,
  *                            "url": "random-head.png,
  *                            "url": "random-torso.png,
  *                            "url": "random-legs.png,
- *                            }]'
+ *                            }'
  *       204:
  *         description: No content
  */

@@ -14,8 +14,8 @@
 }
 
 body {
-  @apply bg-purple-950 text-white;
-
+  background-color: #110015;
+  color: white;
   margin: 0;
   display: flex;
   min-width: 320px;
