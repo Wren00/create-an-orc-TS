@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { GenerateOrc } from "../../../common/interfaces/orc";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect, useState, useRef, type ReactNode } from "react";
+import type { GenerateOrc } from "../../../common/interfaces/orc";
 import ApiClient from "./api-client";
-import { useRef } from "react";
 
 interface OrcContextType {
     orcData: GenerateOrc | null;
