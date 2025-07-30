@@ -22,9 +22,9 @@ console.log("image router mounted");
  *               jsonObject:
  *                 summary: An example JSON response
  *                 value: '[{ "id": 1,
- *                            "url": "s3://s3-url/create-an-orc-head.png,
- *                            "url": "s3://s3-url/create-an-orc-torso.png,
- *                            "url": "s3://s3-url/create-an-orc-legs.png,
+ *                            "url": "random-head.png,
+ *                            "url": "random-torso.png,
+ *                            "url": "random-legs.png,
  *                            }]'
  *       204:
  *         description: No content
@@ -48,9 +48,11 @@ ImageRouter.route("/").get(ImageController.getOrcImages);
  *               jsonObject:
  *                 summary: An example JSON response
  *                 value: '[{ "id": 1,
- *                            "url": "s3://s3-url/create-an-orc/background.png"},
+ *                            "url": "background-image.png"},
  *                            {"id": 2,
- *                            "url": "s3://s3-url/create-an-orc/orc-shadow.png"}
+ *                            "url": "shadow-image.png"},
+ *                            {"id": 3,
+ *                            "url": "border-image.png"}
  *                            }]'
  *       204:
  *         description: No content
