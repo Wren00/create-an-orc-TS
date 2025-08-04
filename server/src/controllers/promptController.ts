@@ -10,7 +10,7 @@ const getAllPrompts = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json(orcs);
     } catch (error) {
         console.error("Error fetching prompt list: ", error);
-        res.status(500).json({ message: "Could not retrieve prompts."});
+        res.status(204).json({ message: "Could not retrieve prompts."});
     }
 };
 
@@ -21,7 +21,7 @@ const getPromptById = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json(prompt);
     } catch (error) {
         console.error("Error fetching prompt id: ", error);
-        res.status(500).json({ message: "Could not find prompt id."});
+        res.status(204).json({ message: "Could not find prompt id."});
     }
 }
 
@@ -31,10 +31,10 @@ const updatePrompt = async (req: Request, res: Response): Promise<void> => {
     try {
         const updatePrompt: UpdatePrompt = req.body;
         const updatedPrompt = await PromptService.updatePrompt(updatePrompt);
-        res.status(200).json(updatedPrompt);
+        res.status(204).json(updatedPrompt);
     } catch (error) {
         console.error("Error updating prompt: ", error);
-        res.status(500).json({ message: "Could not update prompt."});
+        res.status(400).json({ message: "Could not update prompt."});
     }
 }
 
@@ -45,10 +45,10 @@ const createPrompt = async (req: Request, res: Response): Promise<void> => {
     try {
         const newPrompt: CreatePrompt = req.body;
         const createdPrompt = await PromptService.createPrompt(newPrompt);
-        res.status(200).json(createdPrompt);
+        res.status(201).json(createdPrompt);
     } catch (error) {
         console.error("Error creating prompt: ", error);
-        res.status(500).json("Could not create prompt.");
+        res.status(400).json("Could not create prompt.");
     }
 }
 
@@ -61,7 +61,7 @@ const deletePromptById = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json(deletedPrompt);
     } catch (error) {
             console.error("Error deleting prompt: ", error);
-            res.status(500).json({ message: "Could not delete prompt."});
+            res.status(400).json({ message: "Could not delete prompt."});
         }
 }
 
