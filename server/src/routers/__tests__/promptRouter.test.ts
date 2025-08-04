@@ -56,7 +56,7 @@ describe("PATCH /prompts", () => {
             .expect(400)
     });
 
-    it("respond with 204 with prompt updated successfully", async () => {
+    it("respond with 200 with prompt updated successfully", async () => {
         const updatedPrompt = {
             promptId: 1,
             content: "update"
@@ -65,6 +65,6 @@ describe("PATCH /prompts", () => {
             .patch("/prompts")
             .set("Accept", "application/json")
             .send(updatedPrompt)
-            .expect(204);
+            .expect(200);
     });
 });

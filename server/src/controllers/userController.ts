@@ -52,7 +52,7 @@ const updateUserDetails = async (req: Request, res: Response): Promise<void> => 
     try {
         const updateDetails: User = req.body;
         const updatedUser = await UserService.updateUserDetails(updateDetails);
-        res.status(204).json(updatedUser);
+        res.status(200).json(updatedUser);
     } catch (error) {
         console.error("Error updating user: ", error);
         res.status(500).json({ message: "Could not update user."});
@@ -65,10 +65,10 @@ const updateUserAsAdmin = async (req: Request, res: Response): Promise<void> => 
     try {
         const updateDetailsAdmin: User = req.body;
         const updatedUser = await UserService.updateUserAsAdmin(updateDetailsAdmin);
-        res.status(204).json(updatedUser);
+        res.status(200).json(updatedUser);
     } catch (error) {
         console.error("Error updating user: ", error);
-        res.status(500).json({ message: "Could not update user."});
+        res.status(204).json({ message: "Could not update user."});
     }
 }
 

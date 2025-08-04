@@ -10,7 +10,7 @@ const getAllPrompts = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json(orcs);
     } catch (error) {
         console.error("Error fetching prompt list: ", error);
-        res.status(204).json({ message: "Could not retrieve prompts."});
+        res.status(500).json({ message: "Could not retrieve prompts."});
     }
 };
 
@@ -31,7 +31,7 @@ const updatePrompt = async (req: Request, res: Response): Promise<void> => {
     try {
         const updatePrompt: UpdatePrompt = req.body;
         const updatedPrompt = await PromptService.updatePrompt(updatePrompt);
-        res.status(201).json(updatedPrompt);
+        res.status(200).json(updatedPrompt);
     } catch (error) {
         console.error("Error updating prompt: ", error);
         res.status(400).json({ message: "Could not update prompt."});

@@ -22,7 +22,7 @@ describe("ImageController", () => {
 
             const res = await request(app).get("/images");
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(500);
             expect(res.body).toEqual({ message: "Could not retrieve images." });
         });
     });
@@ -43,7 +43,7 @@ describe("ImageController", () => {
 
             const res = await request(app).get("/images/bg");
 
-            expect(res.status).toBe(400);
+            expect(res.status).toBe(500);
             expect(res.body).toEqual({ message: "Could not retrieve images." });
         });
     });

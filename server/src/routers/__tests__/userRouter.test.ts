@@ -62,8 +62,8 @@ describe("POST /users", () => {
 
     it("respond with 201 with user created successfully", async () => {
         const newUser = {
-            emailAddress: "testuser@example.com",
-            userName: "test123",
+            emailAddress: "testuser2@example.com",
+            userName: "test456",
             userPassword: "Password@123"
         }
         await request(app)
@@ -96,7 +96,7 @@ describe("PATCH /users", () => {
             .expect(400)
     });
 
-    it("respond with 204 with user updated successfully", async () => {
+    it("respond with 201 with user updated successfully", async () => {
         const updatedUser = {
             userId: 1,
             emailAddress: "updateUser@update.com",
@@ -107,7 +107,7 @@ describe("PATCH /users", () => {
             .patch("/users")
             .set("Accept", "application/json")
             .send(updatedUser)
-            .expect(204);
+            .expect(200);
     });
 });
 
