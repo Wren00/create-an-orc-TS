@@ -31,7 +31,7 @@ const updatePrompt = async (req: Request, res: Response): Promise<void> => {
     try {
         const updatePrompt: UpdatePrompt = req.body;
         const updatedPrompt = await PromptService.updatePrompt(updatePrompt);
-        res.status(204).json(updatedPrompt);
+        res.status(201).json(updatedPrompt);
     } catch (error) {
         console.error("Error updating prompt: ", error);
         res.status(400).json({ message: "Could not update prompt."});

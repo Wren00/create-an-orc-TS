@@ -8,7 +8,7 @@ describe("ImageController", () => {
 
     describe("GET /images", () => {
         it("should return an array of orc image URLs", async () => {
-            const mockOrcImages = ["orc1.png", "orc2.png", "orc3.png"];
+            const mockOrcImages = ["head1.png", "torso2.png", "legs3.png"];
             (ImageService.getOrcImageArray as jest.Mock).mockResolvedValue(mockOrcImages);
 
             const res = await request(app).get("/images");
