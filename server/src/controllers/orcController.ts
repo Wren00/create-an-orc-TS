@@ -31,7 +31,7 @@ const saveOrc = async (req: Request, res: Response): Promise<void> => {
     try {
         const newOrc: CreateOrc = req.body;
         const createdOrc = await OrcService.saveOrc(newOrc)
-        res.status(200).json(createdOrc);
+        res.status(201).json(createdOrc);
     } catch (error) {
         console.error("Error creating orc: ", error);
         res.status(500).json("Could not create orc.");
