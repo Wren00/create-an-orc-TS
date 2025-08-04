@@ -17,7 +17,8 @@
     "start": "nodemon src/app.ts",
     "debug": "node --inspect -r ts-node/register src/app.ts",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:integration": "NODE_ENV=test jest --config ./jest.integration.config.ts --forceExit --detectOpenHandles"
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma"

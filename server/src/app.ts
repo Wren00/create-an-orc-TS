@@ -4,7 +4,6 @@ import {OrcRouter} from "./routers/orcRouter";
 import {PromptRouter} from "./routers/promptRouter";
 import {GeneratorRouter} from "./routers/generatorRouter";
 import {ImageRouter} from "./routers/imageRouter";
-import {TestRouter} from "./routers/testRouter";
 
 import cors from "cors";
 import morgan from "morgan";
@@ -29,10 +28,11 @@ app.use("/orcs", OrcRouter);
 app.use("/prompts", PromptRouter);
 app.use("/gen", GeneratorRouter);
 app.use("/images", ImageRouter);
-app.use("/test", TestRouter);
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+}
 
 export { app };

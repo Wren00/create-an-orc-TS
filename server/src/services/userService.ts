@@ -113,7 +113,6 @@ async function updateUserDetails(input: UpdateUser) {
             where: { id: input.userId },
             data: removeUndefined(dataToUpdate),
         });
-
         return `User has been successfully updated: ${updatedUser.userName}`
     } catch (error) {
         console.error("Prisma error on updating user:", error);
