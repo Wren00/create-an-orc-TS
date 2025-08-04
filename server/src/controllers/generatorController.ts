@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {GeneratorService} from "../generators/generatorService";
+import {GeneratorService} from "../services/generatorService";
 
 
 //return generated name for an Orc

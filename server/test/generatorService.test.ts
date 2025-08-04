@@ -1,57 +1,76 @@
-import { GeneratorService } from "../src/generators/generatorService";
+import { GeneratorService } from "../src/services/generatorService";
 import { prisma } from "../src/utils/prisma";
-
-jest.mock("../src/utils/prisma");
-
-beforeEach(() => {
-    jest.clearAllMocks();
-});
+import { PromptService } from "../src/services/promptService";
+import OpenAI from "openai";
 
 jest.mock("../src/utils/prisma", () => ({
     prisma: {
         catalogue: {
             count: jest.fn(),
-            create: jest.fn(),
-            findMany: jest.fn(),
-            findFirst: jest.fn()
+            findFirst: jest.fn(),
         },
     },
 }));
 
-describe("GeneratorService.generateOrcName", () => {
+jest.mock("../src/services/promptService", () => ({
+    PromptService: {
+        createNewPromptsCollection: jest.fn(),
+        getSelectedPromptContent: jest.fn(),
+    },
+}));
 
-    it("should return a name with joined syllables", async () => {
-        (prisma.catalogue.count as jest.Mock).mockResolvedValue(10);
-        (prisma.catalogue.findFirst as jest.Mock).mockResolvedValue({ syllables: "he" });
+jest.mock("openai", () => {
+    return {
+        __esModule: true, // <-- allow default import compatibility
+        default: jest.fn().mockImplementation(() => ({
+            chat: {
+                completions: {
+                    create: jest.fn().mockResolvedValue({
+                        choices: [
+                            {
+                                message: { content: "Sample backstory.", },
+                            },
+                        ],
+                    }),
+                },
+            },
+        })),
+    };
+});
 
-        // Force Math.random to return 0 always → randomNum = 1
-        jest.spyOn(Math, "random").mockReturnValue(0);
-
-        const result = await GeneratorService.generateOrcName();
-
-        expect(result).toBe("hek");
-        expect(prisma.catalogue.count).toHaveBeenCalledTimes(1);
-        expect(prisma.catalogue.findFirst).toHaveBeenCalledTimes(1);
+describe("generateOrcData", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
 
-    it("should return at least 3 characters (adds 'k' if needed)", async () => {
-        (prisma.catalogue.count as jest.Mock).mockResolvedValue(10);
-        (prisma.catalogue.findFirst as jest.Mock).mockResolvedValue({ syllables: "a" });
+    it("generates valid orc data", async () => {
+        (prisma.catalogue.count as jest.Mock).mockResolvedValue(1);
+        jest.spyOn(Math, 'random').mockReturnValue(0);
+        // orc name is 1 syllable and should have "k" added to the end
+        (prisma.catalogue.findFirst as jest.Mock).mockResolvedValue({ syllables: "He" });
+        (PromptService.createNewPromptsCollection as jest.Mock).mockResolvedValue(1);
+        (PromptService.getSelectedPromptContent as jest.Mock).mockResolvedValue(["fierce", "loyal", "cunning"]);
+        (OpenAI as any).mockImplementation(() => ({
+            chat: {
+                completions: {
+                    create: jest.fn().mockResolvedValue({
+                        choices: [{ message: { content: "Sample backstory." } }],
+                    }),
+                },
+            },
+        }));
 
-        jest.spyOn(Math, "random").mockReturnValue(0);
+        const orc = await GeneratorService.generateOrcData();
 
-        const result = await GeneratorService.generateOrcName();
-        expect(result).toBe("ak");
-    });
-
-    it("should handle null results from findFirst()", async () => {
-        (prisma.catalogue.count as jest.Mock).mockResolvedValue(10);
-        (prisma.catalogue.findFirst as jest.Mock).mockResolvedValueOnce(null).mockResolvedValueOnce({ syllables: "mok" });
-
-        // Force two iterations
-        jest.spyOn(Math, "random").mockReturnValue(0.5); // (0.5 * 4) + 1 = 3
-
-        const result = await GeneratorService.generateOrcName();
-        expect(result.length).toBeGreaterThanOrEqual(2);
+        expect(orc.name).toMatch(/[A-Z][a-z]+/);
+        expect(orc.name).toBe("Hek");
+        expect(orc.description).toBe("Sample backstory.");
+        expect(orc.str).toBeGreaterThanOrEqual(5);
+        expect(orc.str).toBeLessThanOrEqual(20);
+        expect(orc).toHaveProperty("dex");
+        expect(orc).toHaveProperty("con");
+        expect(orc).toHaveProperty("int");
+        expect(orc).toHaveProperty("wis");
+        expect(orc).toHaveProperty("cha");
     });
 });

@@ -9,7 +9,6 @@ import {TestRouter} from "./routers/testRouter";
 import cors from "cors";
 import morgan from "morgan";
 
-// initialise app
 const app = express();
 
 const PORT = 3001;

@@ -1,6 +1,6 @@
 import {prisma} from "../utils/prisma";
 import OpenAI from "openai";
-import {PromptService} from "../services/promptService";
+import {PromptService} from "./promptService";
 import {GenerateOrc} from "../../../common/interfaces/orc";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 

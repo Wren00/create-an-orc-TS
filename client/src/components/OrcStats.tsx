@@ -7,11 +7,11 @@ export const  OrcStats  = () => {
     if (!orcData) return <p>No Orc data.</p>;
 
     return <div className="orc-stats">
-        <p>{orcData.str}</p>
-        <p>{orcData.dex}</p>
-        <p>{orcData.con}</p>
-        <p>{orcData.int}</p>
-        <p>{orcData.wis}</p>
-        <p>{orcData.cha}</p>
+        <p>STR:{orcData.str}</p>
+        <p>DEX:{orcData.dex}</p>
+        <p>CON:{orcData.con}</p>
+        <p>INT:{orcData.int}</p>
+        <p>WIS:{orcData.wis}</p>
+        <p>CHA:{orcData.cha}</p>
     </div>;
 }
