@@ -1,9 +1,9 @@
-import { GeneratorService } from "../src/services/generatorService";
-import { prisma } from "../src/utils/prisma";
-import { PromptService } from "../src/services/promptService";
+import { GeneratorService } from "../generatorService";
+import { prisma } from "../../utils/prisma";
+import { PromptService } from "../promptService";
 import OpenAI from "openai";
 
-jest.mock("../src/utils/prisma", () => ({
+jest.mock("../../utils/prisma", () => ({
     prisma: {
         catalogue: {
             count: jest.fn(),
@@ -12,7 +12,7 @@ jest.mock("../src/utils/prisma", () => ({
     },
 }));
 
-jest.mock("../src/services/promptService", () => ({
+jest.mock("../promptService", () => ({
     PromptService: {
         createNewPromptsCollection: jest.fn(),
         getSelectedPromptContent: jest.fn(),

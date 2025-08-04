@@ -5,7 +5,7 @@ const config: Config = {
     testEnvironment: "node",
     globalSetup: "<rootDir>/test/global-setup.js",
     globalTeardown: "<rootDir>/test/global-teardown.js",
-    testMatch: ["<rootDir>/src/routers/__tests__/**.ts"],
+    testMatch: ["<rootDir>/src/**/__tests__/**.ts"],
     testTimeout: 30000,
 };
 

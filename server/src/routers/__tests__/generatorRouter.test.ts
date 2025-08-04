@@ -8,7 +8,7 @@ describe("/gen", () => {
                 .get("/gen")
                 .set("Accept", "application/json")
                 .expect("Content-type", /json/)
-                .expect(200);
+                .expect(204);
         });
     });
 });

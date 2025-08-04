@@ -10,5 +10,8 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/src/$1"
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  testMatch: ['**/test/**/*.test.ts'],
+  testMatch: [
+    '**/test/**/*.test.ts',
+    '**/src/**/__tests__/**/*.test.ts'  // 👈 add this line
+  ],
 };

@@ -1,8 +1,8 @@
-import { ImageService } from "../src/services/imageService";
-import { prisma } from "../src/utils/prisma";
+import { ImageService } from "../imageService";
+import { prisma } from "../../utils/prisma";
 
 // Mock setup
-jest.mock("../src/utils/prisma", () => ({
+jest.mock("../../utils/prisma", () => ({
     prisma: {
         orcHead: {
             count: jest.fn(),

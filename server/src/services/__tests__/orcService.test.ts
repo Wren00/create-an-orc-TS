@@ -1,5 +1,5 @@
-import { OrcService } from "../src/services/orcService";
-import { prisma } from "../src/utils/prisma";
+import { OrcService } from "../orcService";
+import { prisma } from "../../utils/prisma";
 
 // mocks
 
@@ -22,7 +22,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-jest.mock("../src/utils/prisma", () => ({
+jest.mock("../../utils/prisma", () => ({
     prisma: {
         orc: {
             create: jest.fn(),

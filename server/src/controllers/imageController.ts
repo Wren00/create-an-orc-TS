@@ -9,7 +9,7 @@ const getOrcImages = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({ images: urlArray });
     } catch (error) {
         console.error("Error fetching images to array: ", error);
-        res.status(500).json({ message: "Could not retrieve images."});
+        res.status(400).json({ message: "Could not retrieve images."});
     }
 }
 
@@ -19,7 +19,7 @@ const getBgImages = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({ images: bgImgs });
     } catch (error) {
         console.error("Error fetching images to array: ", error);
-        res.status(500).json({ message: "Could not retrieve images."});
+        res.status(400).json({ message: "Could not retrieve images."});
     }
 }
 

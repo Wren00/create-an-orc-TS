@@ -1,7 +1,7 @@
-import { PromptService } from "../src/services/promptService";
-import { prisma } from "../src/utils/prisma";
+import { PromptService } from "../promptService";
+import { prisma } from "../../utils/prisma";
 
-jest.mock("../src/utils/prisma");
+jest.mock("../../utils/prisma");
 
 
 const mockPrompt = { id: 1, content: "prompt for testing"};
@@ -10,7 +10,7 @@ beforeEach(() => {
         jest.clearAllMocks();
     });
 
-jest.mock("../src/utils/prisma", () => ({
+jest.mock("../../utils/prisma", () => ({
     prisma: {
         prompts: {
             create: jest.fn(),

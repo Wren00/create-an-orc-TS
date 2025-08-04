@@ -1,5 +1,5 @@
-import { UserService } from "../src/services/userService";
-import { prisma } from "../src/utils/prisma";
+import { UserService } from "../userService";
+import { prisma } from "../../utils/prisma";
 import * as bcrypt from "bcrypt";
 import {Role} from "@prisma/client";
 
@@ -9,7 +9,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-jest.mock("../src/utils/prisma", () => ({
+jest.mock("../../utils/prisma", () => ({
     prisma: {
         user: {
             create: jest.fn(),
