@@ -10,6 +10,7 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - db:/var/lib/postgresql/data
+
   flyway:
     image: flyway/flyway
     command: -url=jdbc:postgresql://db/create_an_orc -schemas=public -user=user -password=pass -outOfOrder=true -connectRetries=5 migrate
@@ -17,5 +18,6 @@ services:
       - ./database/migrations:/flyway/sql
     depends_on:
       - db
+
 volumes:
   db:

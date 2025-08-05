@@ -12,6 +12,6 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testMatch: [
     '**/test/**/*.test.ts',
-    '**/src/**/__tests__/**/*.test.ts'  // 👈 add this line
+    '**/src/**/__tests__/**/*.test.ts'
   ],
 };

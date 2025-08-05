@@ -1,0 +1,22 @@
+services:
+  test_db:
+    image: postgres:latest
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: create_an_orc_test
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - test_db:/var/lib/postgresql/data
+
+  flyway_test:
+    image: flyway/flyway
+    depends_on:
+      - test_db
+    command: -url=jdbc:postgresql://test_db/create_an_orc_test -schemas=public -user=user -password=pass migrate
+    volumes:
+      - ./database/migrations:/flyway/sql
+
+volumes:
+  test_db:
