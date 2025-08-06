@@ -6,7 +6,7 @@ export const  OrcBackstory  = () => {
     if (loading) return <p>Loading story...</p>;
     if (!orcData) return <p>No Orc data.</p>;
 
-    return <div className="orc-backstory">
+    return <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full">
         {orcData.description}
             </div>;
 }

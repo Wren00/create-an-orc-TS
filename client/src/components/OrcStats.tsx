@@ -6,7 +6,7 @@ export const  OrcStats  = () => {
     if (loading) return <p>Loading stats...</p>;
     if (!orcData) return <p>No Orc data.</p>;
 
-    return <div className="orc-stats">
+    return <div className="bg-gray-900 p-6 rounded-lg shadow-lg max-w-sm w-full">
         <p>STR:{orcData.str}</p>
         <p>DEX:{orcData.dex}</p>
         <p>CON:{orcData.con}</p>

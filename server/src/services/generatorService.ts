@@ -38,7 +38,18 @@ async function generateOrcData() {
 
     let formatName = name.charAt(0).toUpperCase() + name.slice(1);
 
-    console.log(formatName)
+    // Generate and return 6 standard array standardArray
+    // 15 14 13 12 10 8 is standard DnD array
+    const standardArray: number[] = [15, 14, 13, 12, 10, 8];
+    const statArray : number[] = []
+
+    for (let i = standardArray.length; i > 0; i--) {
+
+        const randomIndex = Math.floor(Math.random() * i);
+
+        const [value] = standardArray.splice(randomIndex, 1);
+        statArray.push(value);
+    }
 
     const promptCollectionId : number = await PromptService.createNewPromptsCollection();
 
@@ -48,25 +59,35 @@ async function generateOrcData() {
     You are a fantasy writer tasked with creating short backstories for Orc characters based on three personality traits.
 
     Here are some examples:
-
+    
+    {
+        "name" : "Hek",
+        "description" : "Born in the great city of Vornathor, this Orc has survived countless battles through sharp wits and brute force. Though fierce in combat, their loyalty to their clan has earned deep respect. Cunning and resourceful, they often lead raids with careful planning. Their fearlessness and willingness to take risks have led them on countless daring escapades, making them a legend among their kin.",
+        "str" : 10,
+        "dex" : 12,
+        "con" : 11, 
+        "int" : 8,
+        "wis" : 13,
+        "cha" : 14,
+        "prompt_collection_id" : 1,
+    }
     Traits: fierce, loyal, cunning  
-    Backstory: This Orc has survived countless battles through sharp wits and brute force. Though fierce in combat, their loyalty to their clan has earned deep respect. Cunning and resourceful, they often lead raids with careful planning. Their fearlessness and willingness to take risks have led them on countless daring escapades, making them a legend among their kin.
     Traits: brave, wise, solitary  
     Backstory: Raised in the windswept highlands of Mak'Dur, this Orc has trained alone seeking enlightenment for decades. Their wisdom is sought by many, but few are brave enough to approach. With a rugged appearance and scars that tell tales of countless battles won, this Orc is constantly on guard, anticipating any potential threats. 
     Traits: chaotic, generous, beautiful
     Backstory: This Orc is a chaotic being, known for their unpredictable nature and spontaneous actions. Despite their fierce appearance, they possess a heart of generosity, always willing to help those in need, even if it goes against the typical Orc mentality. Their beauty is unconventional, with sharp features and a wild, untamed aura that sets them apart from others in their tribe.
     
     Now, write a short backstory for an Orc with the following traits: ${promptContent.join(", ")}. 
-    Their name is ${formatName}.`;
-
-    console.log(promptContent);
+    Their name is ${formatName}.
+    
+    Return data in JSON format.`;
 
     const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
             {
                 role: "system",
-                content: "You are a fantasy character description generator. Given a list of personality traits, generate a short background for an Orc character. Keep it rich and concise (4–5 sentences). If describing a place, create a thematic name. Make sure the name of the Orc has a capital letter."
+                content: "You are a fantasy character description generator. Given a list of personality traits, generate a short background for an Orc character. Keep it rich and concise (4–5 sentences). If describing a place, create a thematic name. The tone is silly and comedic. Make sure the name of the Orc has a capital letter."
             },
             {
                 role: "user",
@@ -77,24 +98,15 @@ async function generateOrcData() {
 
     const story = response.choices[0].message.content ?? "Unable to generate a backstory for this Orc.";
 
-    // Generate and return 6 random stats
-
-    const stats: number[] = [];
-
-    for (let i = 0; i < 6; i++) {
-        const randomStat = Math.floor(Math.random() * (20 - 5 + 1)) + 5; // random between 5 and 20
-        stats.push(randomStat);
-    }
-
     const orcData : GenerateOrc = {
         name : formatName,
         description : story,
-        str : stats[0],
-        dex : stats[1],
-        con : stats[2],
-        int : stats[3],
-        wis : stats[4],
-        cha : stats[5]
+        str : statArray[0],
+        dex : statArray[1],
+        con : statArray[2],
+        int : statArray[3],
+        wis : statArray[4],
+        cha : statArray[5]
     }
     return orcData
 }
