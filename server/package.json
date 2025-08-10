@@ -12,7 +12,8 @@
     "express-validator": "^7.2.1",
     "morgan": "^1.10.0",
     "openai": "^5.10.1",
-    "prisma": "^6.11.0"
+    "prisma": "^6.11.0",
+    "zod": "^3.25.76"
   },
   "scripts": {
     "start": "nodemon src/app.ts",

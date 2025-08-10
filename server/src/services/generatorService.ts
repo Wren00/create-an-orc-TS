@@ -2,10 +2,12 @@ import {prisma} from "../utils/prisma";
 import OpenAI from "openai";
 import {PromptService} from "./promptService";
 import {GenerateOrc} from "../../../common/interfaces/orc";
+import {parseJsonWithSchema} from "../utils/jsonParser";
+import {GenerateOrcSchema} from "../schemas/orcSchema";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 
-async function generateOrcData() {
+async function generateOrcData() : Promise<GenerateOrc> {
 
     //random number for number of syllables in name between 1 - 3
     const randomNum: number = Math.floor(Math.random() * 3) + 1;
@@ -38,19 +40,6 @@ async function generateOrcData() {
 
     let formatName = name.charAt(0).toUpperCase() + name.slice(1);
 
-    // Generate and return 6 standard array standardArray
-    // 15 14 13 12 10 8 is standard DnD array
-    const standardArray: number[] = [15, 14, 13, 12, 10, 8];
-    const statArray : number[] = []
-
-    for (let i = standardArray.length; i > 0; i--) {
-
-        const randomIndex = Math.floor(Math.random() * i);
-
-        const [value] = standardArray.splice(randomIndex, 1);
-        statArray.push(value);
-    }
-
     const promptCollectionId : number = await PromptService.createNewPromptsCollection();
 
     const promptContent : string[] = await PromptService.getSelectedPromptContent(promptCollectionId);
@@ -77,6 +66,7 @@ async function generateOrcData() {
     Traits: chaotic, generous, beautiful
     Backstory: This Orc is a chaotic being, known for their unpredictable nature and spontaneous actions. Despite their fierce appearance, they possess a heart of generosity, always willing to help those in need, even if it goes against the typical Orc mentality. Their beauty is unconventional, with sharp features and a wild, untamed aura that sets them apart from others in their tribe.
     
+    The stats (str,dex,con,int,wis,cha) must be assigned randomised values from this array: [15, 14, 13, 12, 10, 8]
     Now, write a short backstory for an Orc with the following traits: ${promptContent.join(", ")}. 
     Their name is ${formatName}.
     
@@ -96,19 +86,15 @@ async function generateOrcData() {
         ],
     });
 
-    const story = response.choices[0].message.content ?? "Unable to generate a backstory for this Orc.";
+    const result = response.choices[0]?.message?.content ?? "{}";
 
-    const orcData : GenerateOrc = {
-        name : formatName,
-        description : story,
-        str : statArray[0],
-        dex : statArray[1],
-        con : statArray[2],
-        int : statArray[3],
-        wis : statArray[4],
-        cha : statArray[5]
+    const parsedData = parseJsonWithSchema(result, GenerateOrcSchema);
+
+    if (!parsedData.ok) {
+        throw new Error(`Invalid output: ${parsedData.error}`);
     }
-    return orcData
+
+    return parsedData.value;
 }
 
 const GeneratorService = {
