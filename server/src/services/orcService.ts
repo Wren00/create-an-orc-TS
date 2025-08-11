@@ -57,7 +57,7 @@ export async function getOrcById(orcId: number): Promise<Orc> {
 
 //CREATE function
 
-async function saveOrc(orc: CreateOrc) {
+async function saveOrc(orc: CreateOrc) : Promise<CreateOrc> {
     try {
         const newOrc : CreateOrc = await prisma.orc.create({
             data: {

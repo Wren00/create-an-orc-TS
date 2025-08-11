@@ -39,7 +39,7 @@ const getOrcById: RequestHandler<
 //CREATE functions
 export const saveOrc: RequestHandler<
     {},
-    Orc | { message: string },
+    CreateOrc | { message: string },
     CreateOrc,
     undefined
 > = async (req, res) => {
@@ -63,8 +63,8 @@ export const deleteOrcById : RequestHandler<
 > = async (req, res) => {
     try {
         const orcId = Number(req.params["id"]);
-        const deletedOrc = await OrcService.deleteOrcById(orcId)
-        res.status(200).json({message: "Success."});
+        const deletedOrcResult = await OrcService.deleteOrcById(orcId)
+        res.status(200).json({message: deletedOrcResult});
     } catch (error) {
         console.error("Error deleting orc: ", error);
         res.status(500).json({message: "Could not delete orc."});
