@@ -1,20 +1,31 @@
-import {Request, Response} from "express";
+import { RequestHandler } from "express";
 import { OrcService } from "../services/orcService";
-import { CreateOrc } from "../../../common/interfaces/orc";
+import { Orc, OrcListItem, CreateOrc } from "../schemas/orcSchema";
 
 
 //this function needs authentication for client use
-const getAllOrcs = async (req: Request, res: Response): Promise<void> => {
+
+export const getAllOrcs: RequestHandler<
+    {},
+    OrcListItem[] | { message: string },
+    undefined,
+    undefined
+> = async (req, res) => {
     try {
-        const orcs = await OrcService.getAllOrcsAdmin();
+        const orcs = await OrcService.getAllOrcs();
         res.status(200).json(orcs);
     } catch (error) {
-        console.error("Error fetching orc list: ", error);
-        res.status(500).json({ message: "Could not retrieve orc list."});
+        console.error("Error fetching orc list:", error);
+        res.status(500).json({ message: "Could not retrieve orc list." });
     }
 };
 
-const getOrcById = async (req: Request, res: Response): Promise<void> => {
+const getOrcById: RequestHandler<
+    {id: number},
+    Orc | { message: string },
+    undefined,
+    undefined
+> = async (req, res) => {
     try {
         const orcId  = Number(req.params["id"]);
         const orc = await OrcService.getOrcById(orcId)
@@ -26,28 +37,37 @@ const getOrcById = async (req: Request, res: Response): Promise<void> => {
 }
 
 //CREATE functions
-
-const saveOrc = async (req: Request, res: Response): Promise<void> => {
+export const saveOrc: RequestHandler<
+    {},
+    Orc | { message: string },
+    CreateOrc,
+    undefined
+> = async (req, res) => {
     try {
         const newOrc: CreateOrc = req.body;
         const createdOrc = await OrcService.saveOrc(newOrc)
         res.status(201).json(createdOrc);
     } catch (error) {
         console.error("Error creating orc: ", error);
-        res.status(500).json("Could not create orc.");
+        res.status(500).json({message: "Could not create orc."});
     }
 }
 
 //DELETE functions
 
-const deleteOrcById = async (req: Request, res: Response): Promise<void> => {
+export const deleteOrcById : RequestHandler<
+    { id: number },
+    { message: string },
+    undefined,
+    {}
+> = async (req, res) => {
     try {
         const orcId = Number(req.params["id"]);
         const deletedOrc = await OrcService.deleteOrcById(orcId)
-        res.status(200).json(deletedOrc);
+        res.status(200).json({message: "Success."});
     } catch (error) {
         console.error("Error deleting orc: ", error);
-        res.status(500).json("Could not delete orc.");
+        res.status(500).json({message: "Could not delete orc."});
     }
 }
 

@@ -1,9 +1,8 @@
 import {prisma} from "../utils/prisma";
 import OpenAI from "openai";
 import {PromptService} from "./promptService";
-import {GenerateOrc} from "../../../common/interfaces/orc";
 import {parseJsonWithSchema} from "../utils/jsonParser";
-import {GenerateOrcSchema} from "../schemas/orcSchema";
+import {GenerateOrcSchema, GenerateOrc} from "../schemas/orcSchema";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 
@@ -58,7 +57,6 @@ async function generateOrcData() : Promise<GenerateOrc> {
         "int" : 8,
         "wis" : 13,
         "cha" : 14,
-        "prompt_collection_id" : 1,
     }
     Traits: fierce, loyal, cunning  
     Traits: brave, wise, solitary  

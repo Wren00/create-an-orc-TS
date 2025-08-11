@@ -1,7 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState, useRef, type ReactNode } from "react";
-import type { GenerateOrc } from "../../../common/interfaces/orc";
+import type { GenerateOrc} from "../../../common/interfaces/orc.ts";
 import ApiClient from "./api-client";
+
+// TD: ADD TYPES TO FE TO ENABLE SUCCESSFUL DELETION OF SHARED FILES.
 
 interface OrcContextType {
     orcData: GenerateOrc | null;
