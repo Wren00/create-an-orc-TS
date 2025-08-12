@@ -1,42 +1,37 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {CreateUser, PublicUser, UpdateUser, UpdateUserAdmin} from '../../../common/interfaces/user';
+import {UpdateUser, UpdateUserAdmin} from '../../../common/interfaces/user';
 import {removeUndefined} from "../../../common/utils/dataUtil";
-import {User} from "@prisma/client";
+import {UserListItem, CreateUser, PublicUser, UserListItemSchema, CreateUserSchema, PublicUserSchema} from "../schemas/userSchema";
 
 //GET functions
 
-async function getAllUsers(): Promise<PublicUser[]> {
-    try {
-        const allUsers = await prisma.user.findMany({
-            select: {
-                id: true,
-                userName: true,
-                emailAddress: true
-            },
-        });
-        return allUsers.map<PublicUser>(user => ({
-            userId: user.id,
-            userName: user.userName,
-            emailAddress: user.emailAddress
-        }));
-    } catch (error) {
-        console.error("Unable to fetch users: ", error);
-        throw error;
-    }
+export async function getAllUsers(): Promise<UserListItem[]> {
+    const rows = await prisma.user.findMany({
+        select: { userName: true, emailAddress: true },
+    });
+    const data = rows.map((r) => ({ userName: r.userName, emailAddress: r.emailAddress }));
+
+    const parsed = UserListItemSchema.array().parse(data);
+    // casting to prevent consistent errors with Prisma/Zod validation checking
+    return parsed as UserListItem[];
 }
 
-async function getUserById(userId: number) {
+export async function getUserById(userId: number): Promise<PublicUser> {
     try {
-        const userObject = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: { id: userId },
+            select: { userName: true, emailAddress: true, role: true }
         });
-        if (!userObject) {
-            throw new Error(`User with ID ${userId} not found`);
+
+        const parsedUser = PublicUserSchema.safeParse(user);
+        if (!parsedUser.success) {
+            console.error("Invalid user Data:", parsedUser.error.issues);
+            throw new Error("Unable to parse user");
         }
-        return mapUserToPublicUser(userObject);
+        return parsedUser.data;
     } catch (error) {
-        console.error("Failed to fetch User: ", error);
+        console.error("Failed to fetch user:", error);
         throw error;
     }
 }
@@ -53,16 +48,16 @@ async function getUserByName(nameSearch: string): Promise<PublicUser[]> {
                 },
             },
             select: {
-                id: true,
                 userName: true,
-                emailAddress: true
+                emailAddress: true,
+                role: true
             },
         });
 
         return searchArray.map<PublicUser>(user => ({
-            userId: user.id,
             userName: user.userName,
-            emailAddress: user.emailAddress
+            emailAddress: user.emailAddress,
+            role: user.role
         }));
 
     } catch (error) {
@@ -190,14 +185,7 @@ async function deleteUserById(userId: number) {
         console.error("Prisma error on deleting user:", error);
         throw new Error("Failed to delete user.");
     }
-}
 
-function mapUserToPublicUser (user: User) : PublicUser {
-    return {
-        userId: user.id,
-        userName: user.userName,
-        emailAddress: user.emailAddress,
-    };
 }
 
 

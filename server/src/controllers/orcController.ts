@@ -7,9 +7,7 @@ import { Orc, OrcListItem, CreateOrc } from "../schemas/orcSchema";
 
 export const getAllOrcs: RequestHandler<
     {},
-    OrcListItem[] | { message: string },
-    undefined,
-    undefined
+    OrcListItem[] | { message: string }
 > = async (req, res) => {
     try {
         const orcs = await OrcService.getAllOrcs();
@@ -22,9 +20,7 @@ export const getAllOrcs: RequestHandler<
 
 const getOrcById: RequestHandler<
     {id: number},
-    Orc | { message: string },
-    undefined,
-    undefined
+    Orc | { message: string }
 > = async (req, res) => {
     try {
         const orcId  = Number(req.params["id"]);
@@ -40,8 +36,7 @@ const getOrcById: RequestHandler<
 export const saveOrc: RequestHandler<
     {},
     CreateOrc | { message: string },
-    CreateOrc,
-    undefined
+    CreateOrc
 > = async (req, res) => {
     try {
         const newOrc: CreateOrc = req.body;
@@ -57,9 +52,7 @@ export const saveOrc: RequestHandler<
 
 export const deleteOrcById : RequestHandler<
     { id: number },
-    { message: string },
-    undefined,
-    {}
+    { message: string }
 > = async (req, res) => {
     try {
         const orcId = Number(req.params["id"]);
