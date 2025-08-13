@@ -11,14 +11,12 @@ async function getAllOrcs(): Promise<OrcListItem[]> {
     try {
         const allOrcs = await prisma.orc.findMany({
             select: {
-                id: true,
                 name: true,
                 description: true,
                 orcImagesId: true
             }
         });
         const data = allOrcs.map((row): OrcListItem => ({
-            id: row.id,
             name: row.name,
             description: row.description,
             orcImagesId: row.orcImagesId,

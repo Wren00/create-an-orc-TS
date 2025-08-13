@@ -71,7 +71,7 @@ UserRouter.route("/").get(UserController.getAllUsers);
  *       204:
  *         description: No content
  */
-UserRouter.route("/name").get(UserController.getUserByName);
+UserRouter.route("/:name").get(UserController.getUserByName);
 
 /**
  * @swagger
@@ -177,9 +177,10 @@ UserRouter.route("/:id/orcs").get(UserController.getOrcsByUserId);
  *       204:
  *         description: User Updated
  */
-UserRouter.route("/")
+UserRouter.route("/:id")
     .patch(
         [    check("userName")
+            .optional({nullable: true})
             .isLength({ min: 3 })
             .withMessage("the username must have a minimum length of 3")
             .trim(),
@@ -248,6 +249,7 @@ UserRouter.route("/")
 UserRouter.route("/:id/admin")
     .patch(
         [    check("userName")
+                .optional({nullable: true})
                 .isLength({ min: 3 })
                 .withMessage("the username must have minimum length of 3")
                 .trim(),

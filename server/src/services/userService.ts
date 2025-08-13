@@ -1,8 +1,21 @@
 import bcrypt from "bcrypt";
 import {prisma} from "../utils/prisma";
-import {UpdateUser, UpdateUserAdmin} from '../../../common/interfaces/user';
 import {removeUndefined} from "../../../common/utils/dataUtil";
-import {UserListItem, CreateUser, PublicUser, UserListItemSchema, CreateUserSchema, PublicUserSchema} from "../schemas/userSchema";
+import {
+    UserListItem,
+    CreateUser,
+    UpdateUser,
+    UpdateUserAdmin,
+    PublicUser,
+    UserListItemSchema,
+    CreateUserSchema,
+    PublicUserSchema,
+    UpdateUserSchema,
+    UpdateUserAdminSchema
+} from "../schemas/userSchema";
+import {z} from "zod";
+import {SavedOrc, OrcGallerySchema} from "../schemas/orcSchema";
+import {Prisma} from "@prisma/client";
 
 //GET functions
 
@@ -36,105 +49,145 @@ export async function getUserById(userId: number): Promise<PublicUser> {
     }
 }
 
-async function getUserByName(nameSearch: string): Promise<PublicUser[]> {
-    let searchArray= [];
+export async function getUserByName(name: string): Promise<PublicUser[]> {
+
+    console.log(name);
 
     try {
-        searchArray = await prisma.user.findMany({
+        const nameSearch = await prisma.user.findMany({
             where: {
-                userName: {
-                    contains: nameSearch,
-                    mode: "insensitive",
-                },
+                userName: { contains: name.toString(), mode: "insensitive" },
             },
             select: {
                 userName: true,
                 emailAddress: true,
-                role: true
+                role: true,
             },
         });
 
-        return searchArray.map<PublicUser>(user => ({
-            userName: user.userName,
-            emailAddress: user.emailAddress,
-            role: user.role
-        }));
-
+        const userSearch = z.array(PublicUserSchema).safeParse(nameSearch);
+        if (!userSearch.success) {
+            console.error(
+                "PublicUser validation failed:",
+                userSearch.error.issues.map(i => `${i.path.join(".")}: ${i.message}`).join("; ")
+            );
+            throw new Error("Invalid data returned from database");
+        }
+        return userSearch.data;
     } catch (error) {
         console.error("Error fetching user by name: ", error);
         throw error;
     }
 }
 
-async function getOrcsByUserId(id: number): Promise<{ name: string; str: number; dex: number; con: number; int: number; wis: number; cha: number; orcImagesId: number; userId: number;  }[]> {
+async function getOrcsByUserId(id: number): Promise<SavedOrc[]> {
     try {
         const orcsByUser = await prisma.orc.findMany({
             where: { userId: id },
-        });
-        return  orcsByUser.map((orc: { name: any; description: any; str: any; dex: any; con: any; int: any; wis: any; cha: any; orcImagesId: any; userId: any; }): { name: string, description: string, str: number, dex: number, con: number, int: number, wis: number, cha: number, orcImagesId: number, userId: number } => ({
-            name: orc.name,
-            description: orc.description,
-            str: orc.str,
-            dex: orc.dex,
-            con: orc.con,
-            int: orc.int,
-            wis: orc.wis,
-            cha: orc.cha,
-            orcImagesId: orc.orcImagesId,
-            userId: orc.userId
-        }));
-    } catch (error) {
-        console.error("Unable to fetch orc gallery: ", error);
-        throw error;
+                select: {
+                    name: true,
+                    description: true,
+                    str: true,
+                    dex: true,
+                    con: true,
+                    int: true,
+                    wis: true,
+                    cha: true,
+                    orcImagesId: true,
+                    userId: true
+        },
+    });
+
+    const orcGallery = z.array(OrcGallerySchema).safeParse(orcsByUser);
+    if (!orcGallery.success) {
+        console.error(
+            "Orc validation error:",
+            orcGallery.error.issues.map(i => `${i.path.join(".")}: ${i.message}`).join("; ")
+        );
+        throw new Error("Invalid data returned from database");
     }
+    return orcGallery.data;
+} catch (error) {
+    console.error("Error fetching orcs: ", error);
+    throw error;
+}
 }
 
 
 //UPDATE function
 
-async function updateUserDetails(input: UpdateUser) {
+export async function updateUserDetails(input: UpdateUser) {
+    const parsed = UpdateUserSchema.safeParse(input);
+    if (!parsed.success) {
+        const msg = parsed.error.issues.map(i => `${i.path.join(".") || "root"}: ${i.message}`).join("; ");
+        throw new Error(`Invalid update payload: ${msg}`);
+    }
+    const { id, userName, emailAddress, userPassword } = parsed.data as UpdateUser;
+
+    const dataToUpdate: Record<string, unknown> = { userName, emailAddress };
+    if (userPassword !== undefined) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(userPassword, salt);
+        dataToUpdate.userPassword = hashedPassword;
+    }
+
     try {
-        const dataToUpdate: Record<string, any> = {
-            userName: input.userName,
-            emailAddress: input.emailAddress,
-            userPassword: input.userPassword
-        };
-        if (input.userPassword) {
-            const salt = await bcrypt.genSalt();
-            const hashedPassword = await bcrypt.hash(input.userPassword, salt);
-            dataToUpdate.userPassword = hashedPassword;
-        }
         const updatedUser = await prisma.user.update({
-            where: { id: input.userId },
+            where: { id },
             data: removeUndefined(dataToUpdate),
+            select: { userName: true },
         });
-        return `User has been successfully updated: ${updatedUser.userName}`
-    } catch (error) {
+        return `User has been successfully updated: ${updatedUser.userName}`;
+
+        // validate for Prisma unique constraint.
+    } catch (error: unknown) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2002") {
+                throw new Error("That userName or emailAddress is already in use.");
+            }
+            if (error.code === "P2025") {
+                throw new Error("User not found.");
+            }
+        }
         console.error("Prisma error on updating user:", error);
         throw new Error("Failed to update user");
     }
 }
 
 export async function updateUserAsAdmin(input: UpdateUserAdmin) {
-    try {
-        const dataToUpdate: Record<string, any> = {
-            userName: input.userName,
-            emailAddress: input.emailAddress,
-            availableTokens: input.availableTokens,
-            role: input.role
-        };
-        if (input.userPassword) {
-            const salt = await bcrypt.genSalt();
-            dataToUpdate.userPassword = await bcrypt.hash(input.userPassword, salt);
-        }
-        const updatedUser = await prisma.user.update({
-            where: { id: input.userId },
-            data: removeUndefined(dataToUpdate),
-        });
 
+    const parsed = UpdateUserAdminSchema.safeParse(input);
+    if (!parsed.success) {
+        const msg = parsed.error.issues.map(i => `${i.path.join(".") || "root"}: ${i.message}`).join("; ");
+        throw new Error(`Invalid update payload: ${msg}`);
+    }
+    const { id, userName, emailAddress, userPassword, availableTokens, role } = parsed.data as UpdateUserAdmin;
+
+    const dataToUpdate: Record<string, unknown> = { userName, emailAddress, availableTokens, role };
+    if (userPassword !== undefined) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(userPassword, salt);
+        dataToUpdate.userPassword = hashedPassword;
+    }
+
+    try {
+        const updatedUser = await prisma.user.update({
+            where: { id },
+            data: removeUndefined(dataToUpdate),
+            select: { userName: true },
+        });
         return `User has been successfully updated: ${updatedUser.userName}`;
 
-    } catch (error) {
+        // validate for Prisma unique constraint.
+    } catch (error: unknown) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2002") {
+                throw new Error("That userName or emailAddress is already in use.");
+            }
+            if (error.code === "P2025") {
+                throw new Error("User not found.");
+            }
+        }
         console.error("Prisma error on updating user:", error);
         throw new Error("Failed to update user");
     }
@@ -142,27 +195,38 @@ export async function updateUserAsAdmin(input: UpdateUserAdmin) {
 
 //CREATE function
 
-async function createUser(input: CreateUser): Promise<String> {
+export async function createUser(input: CreateUser): Promise<string> {
+    const parsed = CreateUserSchema.safeParse(input);
+    if (!parsed.success) {
+        const msg = parsed.error.issues
+            .map(i => `${i.path.join(".") || "root"}: ${i.message}`)
+            .join("; ");
+        throw new Error(`Invalid create payload: ${msg}`);
+    }
+
+    const { userName, emailAddress, userPassword } = parsed.data;
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(userPassword, salt);
+
     try {
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(input.userPassword, salt);
-
-        const profile = await prisma.userProfile.create({ data: {} });
-
-        const newUser : CreateUser = await prisma.user.create({
+        const created = await prisma.user.create({
             data: {
-                userName: input.userName,
-                emailAddress: input.emailAddress,
+                userName,
+                emailAddress,
                 userPassword: hashedPassword,
-                profileId: profile.id
-            }
+                profile: { create: {} },
+            },
+            select: { userName: true },
         });
-        const createdUser = {
-            userName: newUser.userName,
-            emailAddress: newUser.emailAddress
-        };
-        return `User successfully registered: ${createdUser.userName}`;
-    } catch(error) {
+
+        return `User successfully registered: ${created.userName}`;
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2002") {
+                throw new Error("That username or email is already in use.");
+            }
+        }
         console.error("Prisma error on creating user:", error);
         throw new Error("Failed to create user.");
     }
