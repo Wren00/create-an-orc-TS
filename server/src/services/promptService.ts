@@ -127,7 +127,6 @@ async function createNewPromptsCollection() {
 }
 
 async function getSelectedPromptContent(collectionId: number): Promise<string[]> {
-    // Step 1: Get the prompt IDs from the collection
     const collection = await prisma.promptsCollection.findUnique({
         where: { id: collectionId },
         select: {
@@ -143,7 +142,6 @@ async function getSelectedPromptContent(collectionId: number): Promise<string[]>
 
     const promptIds = [collection.prompt1, collection.prompt2, collection.prompt3];
 
-    // Step 2: Fetch the prompt contents for those IDs
     const prompts = await prisma.prompts.findMany({
         where: { id: { in: promptIds as number[] } },
         select: { content: true },
